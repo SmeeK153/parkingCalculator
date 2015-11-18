@@ -26,13 +26,28 @@ namespace seleniumTestAutomation
 
         //Setup the end date
         DateTime endDate;
-        
+
         //Constructor: All parameters
         public ParkingCalculation(string lotType, DateTime startDate, DateTime endDate)
         {
             this.lotType = lotType;
             this.startDate = startDate;
             this.endDate = endDate;
+        }
+
+        //Constructor: Page Default Parking Type
+        public ParkingCalculation(DateTime startDate, DateTime endDate)
+        {
+            this.lotType = null;
+            this.startDate = startDate;
+            this.endDate = endDate;
+        }
+
+        //Constructor: All Page Defaults
+        public ParkingCalculation()
+        {
+            this.lotType = null;
+
         }
 
         //Assign the requested lot
@@ -140,7 +155,7 @@ namespace seleniumTestAutomation
             //Check that the duration of stay is equal to(0 Days, 1 Hours, 0 Minutes)
 
             //Create new test instance
-            ParkingCalculation calculation = new ParkingCalculation("STP",,);
+            ParkingCalculation calculation = new ParkingCalculation("STP",'01-01-2014', '10:00', false,'01-01-2014', '11:00', false);
 
             //
 
