@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
-using NUnit.Framework;
-using NUnit;
+
 
 
 namespace seleniumTestAutomation
@@ -17,7 +16,7 @@ namespace seleniumTestAutomation
     {
         //Setup the Google Chrome browser object
         static IWebDriver driver = new ChromeDriver(@"C:\Users\Eric\Desktop\Selenium DLLs\chromedriver_win32");
-
+        
         //Setup the lot type
         string lotType;
 
