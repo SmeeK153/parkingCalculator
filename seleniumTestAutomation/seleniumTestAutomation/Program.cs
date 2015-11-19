@@ -247,13 +247,13 @@ namespace seleniumTestAutomation
             calculation.EntryDate("12/12/2012");
 
             //Set exit time to '9:00'
-            calculation.EntryTime("9:00");
+            calculation.ExitTime("9:00");
 
             //Set exit time to PM
-            calculation.EntryAMPM(false);
+            calculation.ExitAMPM(false);
 
             //Set exit date to '12/12/2012'
-            calculation.EntryDate("12/12/2012");
+            calculation.ExitDate("12/12/2012");
 
             //Submit the calculation request
             calculation.Submit();
