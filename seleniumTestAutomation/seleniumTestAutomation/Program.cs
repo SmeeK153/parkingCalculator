@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,11 +13,27 @@ using OpenQA.Selenium.Support.UI;
 namespace seleniumTestAutomation
 {
 
+
     class ParkingCalculation
     {
-        //Setup the Google Chrome browser object
-        static IWebDriver driver = new ChromeDriver(@"C:\Users\Eric\Desktop\Selenium DLLs\chromedriver_win32");
-        
+        //Object page references
+        IWebDriver driver;
+        SelectElement lotList;
+        IWebElement entryTime;
+        IWebElement entryAM;
+        IWebElement entryPM;
+        IWebElement entryDate;
+        IWebElement exitTime;
+        IWebElement exitAM;
+        IWebElement exitPM;
+        IWebElement exitDate;
+        IWebElement costAmount;
+        IWebElement durationLength;
+        IWebElement errorMessage;
+        IWebElement submitButton;
+
+
+
         //Setup the lot type
         string lotType;
 
@@ -113,14 +130,14 @@ namespace seleniumTestAutomation
         {
 
 
-            return "";
+            return false;
         }
 
         public Boolean ExpectedDuration()
         {
 
 
-            return "";
+            return false;
         }
     }
 
@@ -128,137 +145,200 @@ namespace seleniumTestAutomation
     {
         static void Main(string[] args)
         {
-            TestFramework testInstance = new TestFramework;
+            TestFramework testInstance = new TestFramework();
 
-            //Run each of the tests
-            Console.WriteLine("Test 1: " + testInstance.Test1());
-            Console.WriteLine("Test 2: " + testInstance.Test2());
-            Console.WriteLine("Test 3: " + testInstance.Test3());
-            Console.WriteLine("Test 4: " + testInstance.Test4());
-            Console.WriteLine("Test 5: " + testInstance.Test5());
-            Console.WriteLine("Test 6: " + testInstance.Test6());
-            Console.WriteLine("Test 7: " + testInstance.Test7());
-            Console.WriteLine("Test 8: " + testInstance.Test8());
+            ////Run each of the tests
+            //Console.WriteLine("Test 1: " + testInstance.Test1());
+            //Console.WriteLine("Test 2: " + testInstance.Test2());
+            //Console.WriteLine("Test 3: " + testInstance.Test3());
+            //Console.WriteLine("Test 4: " + testInstance.Test4());
+            //Console.WriteLine("Test 5: " + testInstance.Test5());
+            //Console.WriteLine("Test 6: " + testInstance.Test6());
+            //Console.WriteLine("Test 7: " + testInstance.Test7());
+            //Console.WriteLine("Test 8: " + testInstance.Test8());
+           
+            Debug.WriteLine("Test");
+            testInstance.Test0();
         }
 
-        private Boolean Test1()
+        void Test0()
         {
-            //Navigate to http://adam.goucher.ca/parkcalc/index.php
-            //Select the Short­Term Parking​option from the Choose a Lot d​ropdown
-            //Enter 10:00​and 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
-            //Select the PM ​option in the Choose Entry Date and Time ​section
-            //Enter 11:00​and 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
-            //Select the PM ​option in the Choose Leaving Date and Time s​ection
-            //Click Calculate
-            //Check that the COST ​is equal to $ 2.00
-            //Check that the duration of stay is equal to(0 Days, 1 Hours, 0 Minutes)
+            //Setup the Google Chrome browser object
+            IWebDriver driver = new ChromeDriver(@"C:\Users\Eric\Desktop\Selenium DLLs\chromedriver_win32");
 
-            //Create new test instance
-            ParkingCalculation calculation = new ParkingCalculation("STP",'01-01-2014', '10:00', false,'01-01-2014', '11:00', false);
+            //Navigate to the web page
+            driver.Navigate().GoToUrl("http://adam.goucher.ca/parkcalc/index.php");
+            Debug.WriteLine(driver.Url);
 
-            //
+            //Get the parking lot object
+            SelectElement lotList = new SelectElement(driver.FindElement(By.Name("Lot")));
+            Debug.WriteLine(lotList.ToString());
 
-            //Submit the calculation parameters
-            calculation.Submit();
+            //Get the entry time object
+            IWebElement entryTime = driver.FindElement(By.Name("EntryTime"));
+            Debug.WriteLine(entryTime.ToString());
 
-            //Return the calculation results
-            return (calculation.ExpectedCost() && calculation.ExpectedDuration());
+            //Get the entry AMPM objects
+            IWebElement entryAM = driver.FindElements(By.Name("EntryTimeAMPM")).ElementAt(0);
+            IWebElement entryPM = driver.FindElements(By.Name("EntryTimeAMPM")).ElementAt(1);
+            Debug.WriteLine(entryAM.ToString());
+            Debug.WriteLine(entryPM.ToString());
+
+            //Get the entry date object
+            IWebElement entryDate = driver.FindElement(By.Name("EntryDate"));
+            Debug.WriteLine(entryDate.ToString());
+
+            //Get the exit time object
+            IWebElement exitTime = driver.FindElement(By.Name("ExitTime"));
+            Debug.WriteLine(exitTime.ToString());
+
+            //Get the exit AMPM objects
+            IWebElement exitAM = driver.FindElements(By.Name("ExitTimeAMPM")).ElementAt(0);
+            IWebElement exitPM = driver.FindElements(By.Name("ExitTimeAMPM")).ElementAt(1);
+            Debug.WriteLine(exitAM.ToString());
+
+            //Get the exit date object
+            IWebElement exitDate = driver.FindElement(By.Name("ExitDate"));
+            Debug.WriteLine(exitDate.ToString());
+
+            //Get the results objects
+            if (driver.FindElements(By.ClassName("SubHead")).Count > 1)
+            {
+                IWebElement costAmount = driver.FindElements(By.ClassName("SubHead")).ElementAt(0);
+                IWebElement durationLength = driver.FindElements(By.ClassName("SubHead")).ElementAt(1);
+                Debug.WriteLine(costAmount.ToString());
+                Debug.WriteLine(durationLength.ToString());
+            }
+            else
+            {
+                IWebElement errorMessage = driver.FindElements(By.ClassName("SubHead")).ElementAt(0);
+                Debug.WriteLine(errorMessage.ToString());
+            }
+
+            //Get the submit button object
+            IWebElement submitButton = driver.FindElement(By.Name("Submit"));
+            Debug.WriteLine(submitButton.ToString());
+
         }
 
-        private Boolean Test2()
-        {
-            //Navigate to http://adam.goucher.ca/parkcalc/index.php
-            //Select the Long­Term Surface Parking​option from the Choose a Lot d​ropdown
-            //Click on the Calendar Icon ​in the Choose Entry Date and Time s​ection
-            //Select 01 / 01 / 2014 ​in the new window that appears
-            //Click on the Calendar Icon ​in the Choose Leaving Date and Time s​ection
-            //Select 02 / 01 / 2014 ​in the new window that appears
-            //Click Calculate
-            //Check that the COST ​is equal to $ 270.00
-            //Check that the duration of stay is equal to(31 Days, 0 Hours, 0 Minutes)
+        //private Boolean Test1()
+        //{
+        //    //Navigate to http://adam.goucher.ca/parkcalc/index.php
+        //    //Select the Short­Term Parking​option from the Choose a Lot d​ropdown
+        //    //Enter 10:00​and 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
+        //    //Select the PM ​option in the Choose Entry Date and Time ​section
+        //    //Enter 11:00​and 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
+        //    //Select the PM ​option in the Choose Leaving Date and Time s​ection
+        //    //Click Calculate
+        //    //Check that the COST ​is equal to $ 2.00
+        //    //Check that the duration of stay is equal to(0 Days, 1 Hours, 0 Minutes)
 
-            //Create new test instance
-            ParkingCalculation calculation = new ParkingCalculation();
+        //    //Create new test instance
+        //    ParkingCalculation calculation = new ParkingCalculation("STP",'01-01-2014', '10:00', false,'01-01-2014', '11:00', false);
 
-            return false;
-        }
+        //    //
 
-        private Boolean Test3()
-        {
-            //Navigate to http://adam.goucher.ca/parkcalc/index.php
-            //Select the Short­Term Parking​option from the Choose a Lot d​ropdown
-            //Leave the Entry Time​unchanged
-            //Enter 01 / 02 / 2014 ​in the Choose Entry Date and Time s​ection
-            //Leave the Leaving Time​unchanged
-            //Enter 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
-            //Click Calculate
-            //Check that the following error message appears: ERROR!YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME
+        //    //Submit the calculation parameters
+        //    calculation.Submit();
 
-            //Create new test instance
-            ParkingCalculation calculation = new ParkingCalculation();
+        //    //Return the calculation results
+        //    return (calculation.ExpectedCost() && calculation.ExpectedDuration());
+        //}
 
-            return false;
-        }
+        //private Boolean Test2()
+        //{
+        //    //Navigate to http://adam.goucher.ca/parkcalc/index.php
+        //    //Select the Long­Term Surface Parking​option from the Choose a Lot d​ropdown
+        //    //Click on the Calendar Icon ​in the Choose Entry Date and Time s​ection
+        //    //Select 01 / 01 / 2014 ​in the new window that appears
+        //    //Click on the Calendar Icon ​in the Choose Leaving Date and Time s​ection
+        //    //Select 02 / 01 / 2014 ​in the new window that appears
+        //    //Click Calculate
+        //    //Check that the COST ​is equal to $ 270.00
+        //    //Check that the duration of stay is equal to(31 Days, 0 Hours, 0 Minutes)
 
-        private Boolean Test4()
-        {
-            //Check to see if the page is re-usuable after running at least one calculation.
-            //Run multiple calculations and see if the outcome deteriorates from True to False, or remains the same throughout (i.e., True to True, False to False)
-            //Use the input from Test 1 for the first calculation result, Test 2 for the second calculation result
+        //    //Create new test instance
+        //    ParkingCalculation calculation = new ParkingCalculation();
 
-            //Create new test instance
-            ParkingCalculation calculation = new ParkingCalculation();
+        //    return false;
+        //}
 
-            //Submit the calculation parameters
-            calculation.Submit();
+        //private Boolean Test3()
+        //{
+        //    //Navigate to http://adam.goucher.ca/parkcalc/index.php
+        //    //Select the Short­Term Parking​option from the Choose a Lot d​ropdown
+        //    //Leave the Entry Time​unchanged
+        //    //Enter 01 / 02 / 2014 ​in the Choose Entry Date and Time s​ection
+        //    //Leave the Leaving Time​unchanged
+        //    //Enter 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
+        //    //Click Calculate
+        //    //Check that the following error message appears: ERROR!YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME
 
-            //Store the first calculation result
-            Boolean firstResult = (calculation.ExpectedCost() && calculation.ExpectedDuration());
+        //    //Create new test instance
+        //    ParkingCalculation calculation = new ParkingCalculation();
 
-            //Update the calculation parameters
-            //calculation.Update();
+        //    return false;
+        //}
 
-            //Submit the calculation parameters again
-            calculation.Submit();
+        //private Boolean Test4()
+        //{
+        //    //Check to see if the page is re-usuable after running at least one calculation.
+        //    //Run multiple calculations and see if the outcome deteriorates from True to False, or remains the same throughout (i.e., True to True, False to False)
+        //    //Use the input from Test 1 for the first calculation result, Test 2 for the second calculation result
 
-            //Store the second calculation result
-            Boolean secondResult = (calculation.ExpectedCost() && calculation.ExpectedDuration());
+        //    //Create new test instance
+        //    ParkingCalculation calculation = new ParkingCalculation();
 
-            //Return the results if both runs remain the same
-            return firstResult == secondResult;
-        }
+        //    //Submit the calculation parameters
+        //    calculation.Submit();
 
-        private Boolean Test5()
-        {
-            //Create new test instance
-            ParkingCalculation calculation = new ParkingCalculation();
+        //    //Store the first calculation result
+        //    Boolean firstResult = (calculation.ExpectedCost() && calculation.ExpectedDuration());
 
-            return false;
-        }
+        //    //Update the calculation parameters
+        //    //calculation.Update();
 
-        private Boolean Test6()
-        {
-            //Create new test instance
-            ParkingCalculation calculation = new ParkingCalculation();
+        //    //Submit the calculation parameters again
+        //    calculation.Submit();
 
-            return false;
-        }
+        //    //Store the second calculation result
+        //    Boolean secondResult = (calculation.ExpectedCost() && calculation.ExpectedDuration());
 
-        private Boolean Test7()
-        {
-            //Create new test instance
-            ParkingCalculation calculation = new ParkingCalculation();
+        //    //Return the results if both runs remain the same
+        //    return firstResult == secondResult;
+        //}
 
-            return false;
-        }
+        //private Boolean Test5()
+        //{
+        //    //Create new test instance
+        //    ParkingCalculation calculation = new ParkingCalculation();
 
-        private Boolean Test8()
-        {
-            //Create new test instance
-            ParkingCalculation calculation = new ParkingCalculation();
+        //    return false;
+        //}
 
-            return false;
-        }
+        //private Boolean Test6()
+        //{
+        //    //Create new test instance
+        //    ParkingCalculation calculation = new ParkingCalculation();
+
+        //    return false;
+        //}
+
+        //private Boolean Test7()
+        //{
+        //    //Create new test instance
+        //    ParkingCalculation calculation = new ParkingCalculation();
+
+        //    return false;
+        //}
+
+        //private Boolean Test8()
+        //{
+        //    //Create new test instance
+        //    ParkingCalculation calculation = new ParkingCalculation();
+
+        //    return false;
+        //}
     }
 
     //class AutomationTest
