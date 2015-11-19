@@ -87,12 +87,24 @@ namespace seleniumTestAutomation
             lotList.SelectByText(parkingLotType.ToString());
         }
 
+        //Return the currently selected parking lot type
+        public string ParkingLot()
+        {
+            return lotList.SelectedOption.GetAttribute("innerText").ToString();
+        }
+
         //Set the value of the entry time
         public void EntryTime(string time)
         {
             entryTime.Clear();
             entryTime.Click();
             entryTime.SendKeys(time.ToString());
+        }
+
+        //Return the current entry time value
+        public string EntryTime()
+        {
+            return entryTime.GetAttribute("value").ToString();
         }
 
         //Set the entry time to either AM or PM
@@ -108,6 +120,19 @@ namespace seleniumTestAutomation
             }
         }
 
+        //Return the current entry time AM/PM status
+        public string EntryAMPM()
+        {
+            if (entryAM.Selected)
+            {
+                return "AM";
+            }
+            else
+            {
+                return "PM";
+            }
+        }
+
         //Set the value of the entry date
         public void EntryDate(string date)
         {
@@ -116,12 +141,24 @@ namespace seleniumTestAutomation
             entryDate.SendKeys(date.ToString());
         }
 
+        //Return the current entry date value
+        public string EntryDate()
+        {
+            return entryDate.GetAttribute("value").ToString();
+        }
+
         //Set the value of the exit time
         public void ExitTime(string time)
         {
             exitTime.Clear();
             exitTime.Click();
             exitTime.SendKeys(time.ToString());
+        }
+
+        //Return the current exit time value
+        public string ExitTime()
+        {
+            return exitTime.GetAttribute("value").ToString();
         }
 
         //Set the exit time to either AM or PM
@@ -137,12 +174,31 @@ namespace seleniumTestAutomation
             }
         }
 
+        //Return the current exit time AM/PM status
+        public string ExitAMPM()
+        {
+            if (exitAM.Selected)
+            {
+                return "AM";
+            }
+            else
+            {
+                return "PM";
+            }
+        }
+
         //Set the value of the entry date
         public void ExitDate(string date)
         {
             exitDate.Clear();
             exitDate.Click();
             exitDate.SendKeys(date.ToString());
+        }
+
+        //Return the current exit date value
+        public string ExitDate()
+        {
+            return exitDate.GetAttribute("value").ToString();
         }
 
         //Return if the calculation is yielding an error
@@ -263,8 +319,22 @@ namespace seleniumTestAutomation
             //Set exit date to '12/12/2012'
             calculation.ExitDate("12/12/2012");
 
+
+
+            //Pre-submit debug
+            Debug.WriteLine(calculation.ParkingLot());
+            Debug.WriteLine(calculation.EntryTime() + " " + calculation.EntryAMPM() + " " + calculation.EntryDate());
+            Debug.WriteLine(calculation.ExitTime() + " " + calculation.ExitAMPM() + " " + calculation.ExitDate());
+            //Debug.WriteLine(calculation.ErrorMessageEquals() + calculation.FinalCostEquals() + " " + calculation.ParkingDuration());
+
             //Submit the calculation request
             //calculation.Submit();
+
+            //After submit debug
+            Debug.WriteLine(calculation.ParkingLot());
+            Debug.WriteLine(calculation.EntryTime() + " " + calculation.EntryAMPM() + " " + calculation.EntryDate());
+            Debug.WriteLine(calculation.ExitTime() + " " + calculation.ExitAMPM() + " " + calculation.ExitDate());
+            //Debug.WriteLine(calculation.ErrorMessageEquals() + calculation.FinalCostEquals() + " " + calculation.ParkingDuration());
         }
 
         //private Boolean Test1()
