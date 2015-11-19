@@ -90,6 +90,8 @@ namespace seleniumTestAutomation
         //Set the value of the entry time
         public void EntryTime(string time)
         {
+            entryTime.Clear();
+            entryTime.Click();
             entryTime.SendKeys(time.ToString());
         }
 
@@ -109,12 +111,16 @@ namespace seleniumTestAutomation
         //Set the value of the entry date
         public void EntryDate(string date)
         {
+            entryDate.Clear();
+            entryDate.Click();
             entryDate.SendKeys(date.ToString());
         }
 
         //Set the value of the exit time
         public void ExitTime(string time)
         {
+            exitTime.Clear();
+            exitTime.Click();
             exitTime.SendKeys(time.ToString());
         }
 
@@ -134,6 +140,8 @@ namespace seleniumTestAutomation
         //Set the value of the entry date
         public void ExitDate(string date)
         {
+            exitDate.Clear();
+            exitDate.Click();
             exitDate.SendKeys(date.ToString());
         }
 
@@ -256,7 +264,7 @@ namespace seleniumTestAutomation
             calculation.ExitDate("12/12/2012");
 
             //Submit the calculation request
-            calculation.Submit();
+            //calculation.Submit();
         }
 
         //private Boolean Test1()
