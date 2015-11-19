@@ -12,133 +12,202 @@ using OpenQA.Selenium.Support.UI;
 
 namespace seleniumTestAutomation
 {
-
-
     class ParkingCalculation
     {
         //Object page references
-        IWebDriver driver;
-        SelectElement lotList;
-        IWebElement entryTime;
-        IWebElement entryAM;
-        IWebElement entryPM;
-        IWebElement entryDate;
-        IWebElement exitTime;
-        IWebElement exitAM;
-        IWebElement exitPM;
-        IWebElement exitDate;
-        IWebElement costAmount;
-        IWebElement durationLength;
-        IWebElement errorMessage;
-        IWebElement submitButton;
+        private IWebDriver driver;
+        private SelectElement lotList;
+        private IWebElement entryTime;
+        private IWebElement entryAM;
+        private IWebElement entryPM;
+        private IWebElement entryDate;
+        private IWebElement exitTime;
+        private IWebElement exitAM;
+        private IWebElement exitPM;
+        private IWebElement exitDate;
+        private IWebElement costAmount;
+        private IWebElement durationLength;
+        private IWebElement errorMessage;
+        private IWebElement submitButton;
 
-
-
-        //Setup the lot type
-        string lotType;
-
-        //Setup the start date
-        DateTime startDate;
-
-        //Setup the end date
-        DateTime endDate;
-
-        //Constructor: All parameters
-        public ParkingCalculation(string lotType, DateTime startDate, DateTime endDate)
-        {
-            this.lotType = lotType;
-            this.startDate = startDate;
-            this.endDate = endDate;
-        }
-
-        //Constructor: Page Default Parking Type
-        public ParkingCalculation(DateTime startDate, DateTime endDate)
-        {
-            this.lotType = null;
-            this.startDate = startDate;
-            this.endDate = endDate;
-        }
-
-        //Constructor: All Page Defaults
+        //Constructor
         public ParkingCalculation()
         {
-            this.lotType = null;
+            //Chrome web driver reference
+            driver = new ChromeDriver(@"C:\Users\Eric\Desktop\Selenium DLLs\chromedriver_win32");
 
-        }
+            //Navigate the NEW object to the desired page
+            driver.Navigate().GoToUrl("http://adam.goucher.ca/parkcalc/index.php");
 
-        //Assign the requested lot
-        public void SetLot()
-        {
-            //Get the lot dropdown list
-            SelectElement parkingLotType = new SelectElement(driver.FindElement(By.Name("Lot")));
+            //Set reference to the parking lot type control
+            lotList = new SelectElement(driver.FindElement(By.Name("Lot")));
 
-            //Select the desired parking option
-            parkingLotType.SelectByValue(lotType);
-        }
+            //Set reference to the entry time control
+            entryTime = driver.FindElement(By.Name("EntryTime"));
 
-        //Set both of the provided dates
-        public void SetDate()
-        {
+            //Set reference to the entry time AM radio control
+            entryAM = driver.FindElements(By.Name("EntryTimeAMPM")).ElementAt(0);
 
-        }
+            //Set reference to the entry time PM radio control
+            entryPM = driver.FindElements(By.Name("EntryTimeAMPM")).ElementAt(1);
 
-        //Set an alternative date
-        public void SetDate(string dateType, string hour, string minute, Boolean am, string day, string month, string year)
-        {
+            //Set reference to the entry date control
+            entryDate = driver.FindElement(By.Name("EntryDate"));
 
-        }
+            //Set reference to the exit time control
+            exitTime = driver.FindElement(By.Name("ExitTime"));
 
-        //Submit the calculation
-        public void Submit()
-        {
+            //Set reference to the exit time AM radio control
+            exitAM = driver.FindElements(By.Name("ExitTimeAMPM")).ElementAt(0);
 
-        }
+            //Set reference to the exit time PM radio control
+            exitPM = driver.FindElements(By.Name("ExitTimeAMPM")).ElementAt(1);
 
+            //Set reference to the exit date control
+            exitDate = driver.FindElement(By.Name("ExitDate"));
 
-        //Assign the requested date
-        private void SetParkingDate(Boolean entryDate)
-        {
-            //Create the date type name prefix
-            string dateTypePrefix;
-
-            //Determine if the date is AM or PM
-            //AM = 0 and PM = 1
-            int amPM = 0;                                                           //Need to capture AM/PM
-
-            //Determine which type of date is being worked with: Entry or Exit
-            if (entryDate)
+            //Set the references to the parking cost & stay duration OR error message, depending upon the outcome
+            if (driver.FindElements(By.ClassName("SubHead")).Count > 1)
             {
-                dateTypePrefix = "Entry";
+                costAmount = driver.FindElements(By.ClassName("SubHead")).ElementAt(0);
+                durationLength = driver.FindElements(By.ClassName("SubHead")).ElementAt(1);
             }
             else
             {
-                dateTypePrefix = "Exit";
+                errorMessage = driver.FindElements(By.ClassName("SubHead")).ElementAt(0);
             }
 
-            //Set the Time
-            driver.FindElement(By.Name(dateTypePrefix + "Time")).SendKeys("a");     //Need to capture the time
-
-            //Set the AM/PM
-            driver.FindElements(By.Name(dateTypePrefix + "TimeAMPM")).ElementAt(amPM).Click();
-
-            //Set the Date
-            driver.FindElements(By.Name(dateTypePrefix + "TimeAMPM")).ElementAt(amPM).Click();
-
+            //Set the reference to the submit button
+            submitButton = driver.FindElement(By.Name("Submit"));
         }
 
-        public Boolean ExpectedCost()
+        //Set the value of the parking lot type via the displayed text the user sees
+        public void ParkingLot(string parkingLotType)
         {
-
-
-            return false;
+            lotList.SelectByText(parkingLotType.ToString());
         }
 
-        public Boolean ExpectedDuration()
+        //Set the value of the entry time
+        public void EntryTime(string time)
         {
-
-
-            return false;
+            entryTime.SendKeys(time.ToString());
         }
+
+        //Set the entry time to either AM or PM
+        public void EntryAMPM(Boolean am)
+        {
+            if (am)
+            {
+                entryAM.Click();
+            } 
+            else
+            {
+                entryPM.Click();
+            }
+        }
+
+        //Set the value of the entry date
+        public void EntryDate(string date)
+        {
+            entryDate.SendKeys(date.ToString());
+        }
+
+        //Set the value of the exit time
+        public void ExitTime(string time)
+        {
+            exitTime.SendKeys(time.ToString());
+        }
+
+        //Set the exit time to either AM or PM
+        public void ExitAMPM(Boolean am)
+        {
+            if (am)
+            {
+                exitAM.Click();
+            }
+            else
+            {
+                exitPM.Click();
+            }
+        }
+
+        //Set the value of the entry date
+        public void ExitDate(string date)
+        {
+            exitDate.SendKeys(date.ToString());
+        }
+
+        //Return if the calculation is yielding an error
+        public Boolean YieldsError()
+        {
+            return (errorMessage != null) && (errorMessage.GetAttribute("value").ToString().Substring(0,5) == "ERROR");
+        }
+
+        //Return if the calculation is yielding an error AND matches the specific error
+        public Boolean ErrorMessageEquals(string message)
+        {
+            //Check if the returned message is an error, and then if it is the requested error type
+            return YieldsError() && (errorMessage.GetAttribute("value").ToString() == message.ToString());
+        }
+
+        //Return the calculation error, if the calculation is yielding an error
+        public string ErrorMessageEquals()
+        {
+            //Check if the returned message is an error, and then return the error message
+            if (YieldsError())
+            {
+                return errorMessage.GetAttribute("value").ToString();
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        //Return the cost value, if the calculation is NOT yielding an error
+        public string FinalCostEquals()
+        {
+            if (YieldsError())
+            {
+                return "";
+            }
+            else
+            {
+                return costAmount.GetAttribute("value").ToString();
+            }
+        }
+
+        //Return if the calculation is NOT yielding an error AND matches the specific cost string
+        public Boolean FinalCostEquals(string cost)
+        {
+            return !YieldsError() && costAmount.GetAttribute("value").ToString() == cost.ToString();
+        }
+
+        //Return the duration string, if the calculation is NOT yielding an error
+        public string ParkingDuration()
+        {
+            if (YieldsError())
+            {
+                return "";
+            }
+            else
+            {
+                return durationLength.GetAttribute("value").ToString();
+            }
+        }
+
+        //Return if the calculation is NOT yielding an error AND matches the specific duration string
+        public Boolean ParkingDuration(string length)
+        {
+            return !YieldsError() && durationLength.GetAttribute("value").ToString() == length.ToString();
+        }
+
+        //Submit the calculation request to the webpage
+        public void Submit()
+        {
+            submitButton.Click();
+        }
+
     }
 
     class TestFramework
@@ -157,68 +226,37 @@ namespace seleniumTestAutomation
             //Console.WriteLine("Test 7: " + testInstance.Test7());
             //Console.WriteLine("Test 8: " + testInstance.Test8());
            
-            Debug.WriteLine("Test");
             testInstance.Test0();
         }
 
         void Test0()
         {
-            //Setup the Google Chrome browser object
-            IWebDriver driver = new ChromeDriver(@"C:\Users\Eric\Desktop\Selenium DLLs\chromedriver_win32");
+            //Open up web page to testing URL
+            ParkingCalculation calculation = new ParkingCalculation();
 
-            //Navigate to the web page
-            driver.Navigate().GoToUrl("http://adam.goucher.ca/parkcalc/index.php");
-            Debug.WriteLine(driver.Url);
+            //Set parking type to 'Economy Parking'
+            calculation.ParkingLot("Economy Parking");
 
-            //Get the parking lot object
-            SelectElement lotList = new SelectElement(driver.FindElement(By.Name("Lot")));
-            Debug.WriteLine(lotList.ToString());
+            //Set entry time to '8:00'
+            calculation.EntryTime("8:00");
 
-            //Get the entry time object
-            IWebElement entryTime = driver.FindElement(By.Name("EntryTime"));
-            Debug.WriteLine(entryTime.ToString());
+            //Set entry time to PM
+            calculation.EntryAMPM(false);
 
-            //Get the entry AMPM objects
-            IWebElement entryAM = driver.FindElements(By.Name("EntryTimeAMPM")).ElementAt(0);
-            IWebElement entryPM = driver.FindElements(By.Name("EntryTimeAMPM")).ElementAt(1);
-            Debug.WriteLine(entryAM.ToString());
-            Debug.WriteLine(entryPM.ToString());
+            //Set entry date to '12/12/2012'
+            calculation.EntryDate("12/12/2012");
 
-            //Get the entry date object
-            IWebElement entryDate = driver.FindElement(By.Name("EntryDate"));
-            Debug.WriteLine(entryDate.ToString());
+            //Set exit time to '9:00'
+            calculation.EntryTime("9:00");
 
-            //Get the exit time object
-            IWebElement exitTime = driver.FindElement(By.Name("ExitTime"));
-            Debug.WriteLine(exitTime.ToString());
+            //Set exit time to PM
+            calculation.EntryAMPM(false);
 
-            //Get the exit AMPM objects
-            IWebElement exitAM = driver.FindElements(By.Name("ExitTimeAMPM")).ElementAt(0);
-            IWebElement exitPM = driver.FindElements(By.Name("ExitTimeAMPM")).ElementAt(1);
-            Debug.WriteLine(exitAM.ToString());
+            //Set exit date to '12/12/2012'
+            calculation.EntryDate("12/12/2012");
 
-            //Get the exit date object
-            IWebElement exitDate = driver.FindElement(By.Name("ExitDate"));
-            Debug.WriteLine(exitDate.ToString());
-
-            //Get the results objects
-            if (driver.FindElements(By.ClassName("SubHead")).Count > 1)
-            {
-                IWebElement costAmount = driver.FindElements(By.ClassName("SubHead")).ElementAt(0);
-                IWebElement durationLength = driver.FindElements(By.ClassName("SubHead")).ElementAt(1);
-                Debug.WriteLine(costAmount.ToString());
-                Debug.WriteLine(durationLength.ToString());
-            }
-            else
-            {
-                IWebElement errorMessage = driver.FindElements(By.ClassName("SubHead")).ElementAt(0);
-                Debug.WriteLine(errorMessage.ToString());
-            }
-
-            //Get the submit button object
-            IWebElement submitButton = driver.FindElement(By.Name("Submit"));
-            Debug.WriteLine(submitButton.ToString());
-
+            //Submit the calculation request
+            calculation.Submit();
         }
 
         //private Boolean Test1()
@@ -340,51 +378,4 @@ namespace seleniumTestAutomation
         //    return false;
         //}
     }
-
-    //class AutomationTest
-    //{
-    //    //Setup the Google Chrome browser object
-    //    static IWebDriver driver = new ChromeDriver(@"C:\Users\Eric\Desktop\Selenium DLLs\chromedriver_win32");
-
-
-
-
-    //    static void Main(string[] args)
-    //    {
-    //        NewTestEnvironment();
-    //        SetLot("VP");
-    //    }
-
-    //    static void NewTestEnvironment()
-    //    {
-    //        //Navigate to the calculator page
-    //        driver.Navigate().GoToUrl("http://adam.goucher.ca/parkcalc/");
-    //    }
-
-    //    static void SetLot(string lotType)
-    //    {
-    //        //Get the lot dropdown list
-    //        SelectElement parkingLotType = new SelectElement(driver.FindElement(By.Name("Lot")));
-
-    //        //Select the desired parking option
-    //        parkingLotType.SelectByValue(lotType);
-    //    }
-
-    //    static void SetDate(int hour, int minute, Boolean am, int day, int month, int year, Boolean entryDate)
-    //    {
-    //        //Determine the type of date being referenced
-    //        string dateType;
-    //        if (entryDate)
-    //        {
-    //            dateType = "Entry";
-    //        }
-    //        else
-    //        {
-    //            dateType = "Exit";
-    //        }
-
-
-    //    }
-
-    //}
 }
