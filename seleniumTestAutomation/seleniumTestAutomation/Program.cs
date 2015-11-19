@@ -272,6 +272,11 @@ namespace seleniumTestAutomation
             submitButton.Click();
         }
 
+        //Return the current test page URL
+        public string CurrentURL()
+        {
+            return driver.Url;
+        }
     }
 
     class TestFramework
@@ -319,13 +324,12 @@ namespace seleniumTestAutomation
             //Set exit date to '12/12/2012'
             calculation.ExitDate("12/12/2012");
 
-
-
             //Pre-submit debug
             Debug.WriteLine(calculation.ParkingLot());
             Debug.WriteLine(calculation.EntryTime() + " " + calculation.EntryAMPM() + " " + calculation.EntryDate());
             Debug.WriteLine(calculation.ExitTime() + " " + calculation.ExitAMPM() + " " + calculation.ExitDate());
-            //Debug.WriteLine(calculation.ErrorMessageEquals() + calculation.FinalCostEquals() + " " + calculation.ParkingDuration());
+            Debug.WriteLine(calculation.ErrorMessageEquals()); // + calculation.FinalCostEquals() + " " + calculation.ParkingDuration());               //Before the page is submitted, there is only one object (currently defined as an error case)
+                                                                                                                                                        //Need to cover the case when ERROR isn't included, but there is only one object = page isn't submitted yet.
 
             //Submit the calculation request
             //calculation.Submit();
