@@ -29,6 +29,15 @@ namespace seleniumTestAutomation
         private IWebElement durationLength;
         private IWebElement errorMessage;
         private IWebElement submitButton;
+        private IWebElement entryDateSelection;
+        private IWebElement exitDateSelection;
+
+        public void EntryDatePick()
+        {
+            driver.FindElements(By.TagName("a")).ElementAt(0).Click();
+            //driver.WindowHandles
+            //driver.SwitchTo().Window("Pick a Date");
+        }
 
         //Constructor
         public ParkingCalculation()
@@ -307,62 +316,28 @@ namespace seleniumTestAutomation
 
             ////Run each of the tests
 
-            Debug.WriteLine("Test 1: " + testInstance.Test1());
-            //Debug.WriteLine("Test 2: " + testInstance.Test2());
-            //Debug.WriteLine("Test 3: " + testInstance.Test3());
-            //Debug.WriteLine("Test 4: " + testInstance.Test4());
-            //Debug.WriteLine("Test 5: " + testInstance.Test5());
-            //Debug.WriteLine("Test 6: " + testInstance.Test6());
-            //Debug.WriteLine("Test 7: " + testInstance.Test7());
-            //Debug.WriteLine("Test 8: " + testInstance.Test8());
-
-            //testInstance.Test0();
+            //Debug.WriteLine("Test 1: " + testInstance.Test1());   //PASSED
+            //Debug.WriteLine("Test 2: " + testInstance.Test2());   //Needs more work
+            //Debug.WriteLine("Test 3: " + testInstance.Test3());   //PASSED
+            //Debug.WriteLine("Test 4: " + testInstance.Test4());   //FAILED
+            //Debug.WriteLine("Test 5: " + testInstance.Test5());   //FAILED 
+            //Debug.WriteLine("Test 6: " + testInstance.Test6());   //FAILED
+            //Debug.WriteLine("Test 7: " + testInstance.Test7());   //FAILED
+            //Debug.WriteLine("Test 8: " + testInstance.Test8());   //FAILED
+            
+            testInstance.Test0();
         }
 
-        //void Test0()
-        //{
-        //    //Open up web page to testing URL
-        //    ParkingCalculation calculation = new ParkingCalculation();
+        void Test0()
+        {
+            //Open up web page to testing URL
+            ParkingCalculation calculation = new ParkingCalculation();
 
-        //    //Set parking type to 'Economy Parking'
-        //    calculation.ParkingLot("Economy Parking");
+            //Select the date picker
+            calculation.EntryDatePick();
 
-        //    //Set entry time to '8:00'
-        //    calculation.EntryTime("8:00");
-
-        //    //Set entry time to PM
-        //    calculation.EntryAMPM(false);
-
-        //    //Set entry date to '12/12/2012'
-        //    calculation.EntryDate("12/12/2012");
-
-        //    //Set exit time to '9:00'
-        //    calculation.ExitTime("9:00");
-
-        //    //Set exit time to PM
-        //    calculation.ExitAMPM(false);
-
-        //    //Set exit date to '12/12/2012'
-        //    calculation.ExitDate("12/12/2012");
-
-        //    //Pre-submit debug
-        //    Debug.WriteLine(calculation.ParkingLot());
-        //    Debug.WriteLine(calculation.EntryTime() + " " + calculation.EntryAMPM() + " " + calculation.EntryDate());
-        //    Debug.WriteLine(calculation.ExitTime() + " " + calculation.ExitAMPM() + " " + calculation.ExitDate());
-        //    Debug.WriteLine("Yields Error: " + calculation.YieldsError());
-        //    Debug.WriteLine("Error message: " + calculation.ErrorMessage() + " Final Cost: " + calculation.FinalCost() + " Parking Duration: " + calculation.ParkingDuration());
-
-
-        //    //Submit the calculation request
-        //    calculation.Submit();
-
-        //    ////After submit debug
-        //    Debug.WriteLine(calculation.ParkingLot());
-        //    Debug.WriteLine(calculation.EntryTime() + " " + calculation.EntryAMPM() + " " + calculation.EntryDate());
-        //    Debug.WriteLine(calculation.ExitTime() + " " + calculation.ExitAMPM() + " " + calculation.ExitDate());
-        //    Debug.WriteLine("Yields Error: " + calculation.YieldsError());
-        //    Debug.WriteLine("Error message: " + calculation.ErrorMessage() + " Final Cost: " + calculation.FinalCost() + " Parking Duration: " + calculation.ParkingDuration());
-        //}
+            
+        }
 
         private Boolean Test1()
         {
@@ -394,99 +369,200 @@ namespace seleniumTestAutomation
             return (calculation.ParkingDuration("(0 Days, 1 Hours, 0 Minutes)") && calculation.FinalCost("$ 2.00"));
         }
 
-        //private Boolean Test2()
-        //{
-        //    //Navigate to http://adam.goucher.ca/parkcalc/index.php
-        //    //Select the Long­Term Surface Parking​option from the Choose a Lot d​ropdown
-        //    //Click on the Calendar Icon ​in the Choose Entry Date and Time s​ection
-        //    //Select 01 / 01 / 2014 ​in the new window that appears
-        //    //Click on the Calendar Icon ​in the Choose Leaving Date and Time s​ection
-        //    //Select 02 / 01 / 2014 ​in the new window that appears
-        //    //Click Calculate
-        //    //Check that the COST ​is equal to $ 270.00
-        //    //Check that the duration of stay is equal to(31 Days, 0 Hours, 0 Minutes)
+        private Boolean Test2()
+        {
+            //Navigate to http://adam.goucher.ca/parkcalc/index.php
+            ParkingCalculation calculation = new ParkingCalculation();
 
-        //    //Create new test instance
-        //    ParkingCalculation calculation = new ParkingCalculation();
+            //Select the Long­ Term Surface Parking ​option from the Choose a Lot d​ropdown
+            calculation.ParkingLot("Long-Term Surface Parking");
 
-        //    return false;
-        //}
+            //Click on the Calendar Icon ​in the Choose Entry Date and Time s​ection
+            //Select 01 / 01 / 2014 ​in the new window that appears                                                             //NEED TO SUPPORT THE DATE SELECTOR
 
-        //private Boolean Test3()
-        //{
-        //    //Navigate to http://adam.goucher.ca/parkcalc/index.php
-        //    //Select the Short­Term Parking​option from the Choose a Lot d​ropdown
-        //    //Leave the Entry Time​unchanged
-        //    //Enter 01 / 02 / 2014 ​in the Choose Entry Date and Time s​ection
-        //    //Leave the Leaving Time​unchanged
-        //    //Enter 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
-        //    //Click Calculate
-        //    //Check that the following error message appears: ERROR!YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME
 
-        //    //Create new test instance
-        //    ParkingCalculation calculation = new ParkingCalculation();
+            //Click on the Calendar Icon ​in the Choose Leaving Date and Time s​ection
+            //Select 02 / 01 / 2014 ​in the new window that appears
 
-        //    return false;
-        //}
 
-        //private Boolean Test4()
-        //{
-        //    //Check to see if the page is re-usuable after running at least one calculation.
-        //    //Run multiple calculations and see if the outcome deteriorates from True to False, or remains the same throughout (i.e., True to True, False to False)
-        //    //Use the input from Test 1 for the first calculation result, Test 2 for the second calculation result
+            //Click Calculate
+            calculation.Submit();
 
-        //    //Create new test instance
-        //    ParkingCalculation calculation = new ParkingCalculation();
+            //Check that the COST ​is equal to $ 270.00
+            //Check that the duration of stay is equal to (31 Days, 0 Hours, 0 Minutes)
+            return (calculation.ParkingDuration("(31 Days, 0 Hours, 0 Minutes)") && calculation.FinalCost("$ 270.00"));
+        }
 
-        //    //Submit the calculation parameters
-        //    calculation.Submit();
+        private Boolean Test3()
+        {
+            //Navigate to http://adam.goucher.ca/parkcalc/index.php
+            ParkingCalculation calculation = new ParkingCalculation();
 
-        //    //Store the first calculation result
-        //    Boolean firstResult = (calculation.ExpectedCost() && calculation.ExpectedDuration());
+            //Select the Short-­Term Parking​ option from the Choose a Lot d​ropdown
+            calculation.ParkingLot("Short-Term Parking");
 
-        //    //Update the calculation parameters
-        //    //calculation.Update();
+            //Leave the Entry Time​ unchanged
+            //Enter 01 / 02 / 2014 ​in the Choose Entry Date and Time s​ection
+            calculation.EntryDate("01/02/2014");
 
-        //    //Submit the calculation parameters again
-        //    calculation.Submit();
+            //Leave the Leaving Time​ unchanged
+            //Enter 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
+            calculation.ExitDate("01/01/2014");
 
-        //    //Store the second calculation result
-        //    Boolean secondResult = (calculation.ExpectedCost() && calculation.ExpectedDuration());
+            //Click Calculate
+            calculation.Submit();
 
-        //    //Return the results if both runs remain the same
-        //    return firstResult == secondResult;
-        //}
+            //Check that the following error message appears: ERROR! YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME
+            return calculation.ErrorMessage("ERROR! YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME");
+        }
 
-        //private Boolean Test5()
-        //{
-        //    //Create new test instance
-        //    ParkingCalculation calculation = new ParkingCalculation();
+        private Boolean Test4()
+        {
+            //Navigate to http://adam.goucher.ca/parkcalc/index.php
+            ParkingCalculation calculation = new ParkingCalculation();
 
-        //    return false;
-        //}
+            //Select the Short­Term Parking​ option from the Choose a Lot d​ropdown
+            calculation.ParkingLot("Short-Term Parking");
 
-        //private Boolean Test6()
-        //{
-        //    //Create new test instance
-        //    ParkingCalculation calculation = new ParkingCalculation();
+            //Enter 10:00​ and 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
+            calculation.EntryTime("10:00");
+            calculation.EntryDate("01/01/2014");
 
-        //    return false;
-        //}
+            //Select the PM ​option in the Choose Entry Date and Time ​section
+            calculation.EntryAMPM(false);
 
-        //private Boolean Test7()
-        //{
-        //    //Create new test instance
-        //    ParkingCalculation calculation = new ParkingCalculation();
+            //Enter 11:00​ and 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
+            calculation.ExitTime("11:00");
+            calculation.ExitDate("01/01/2014");
 
-        //    return false;
-        //}
+            //Select the PM ​option in the Choose Leaving Date and Time s​ection
+            calculation.ExitAMPM(false);
 
-        //private Boolean Test8()
-        //{
-        //    //Create new test instance
-        //    ParkingCalculation calculation = new ParkingCalculation();
+            //Click Calculate
+            calculation.Submit();
 
-        //    return false;
-        //}
+            //Check to make sure both AM/PM radio buttons remained selected
+            return (calculation.EntryAMPM().ToString() == "PM" && calculation.ExitAMPM().ToString() == "PM" && calculation.EntryTime().ToString() == "10:00" && calculation.ExitTime().ToString() == "11:00");
+        }
+
+        private Boolean Test5() 
+        {
+            //Navigate to http://adam.goucher.ca/parkcalc/index.php
+            ParkingCalculation calculation = new ParkingCalculation();
+
+            //Select the Short­Term Parking​ option from the Choose a Lot d​ropdown
+            calculation.ParkingLot("Short-Term Parking");
+
+            //Enter 10:00​ and 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
+            calculation.EntryTime("10:00");
+            calculation.EntryDate("01/01/2014");
+
+            //Select the PM ​option in the Choose Entry Date and Time ​section
+            calculation.EntryAMPM(false);
+
+            //Enter 25:00​ and 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
+            calculation.ExitTime("25:00");
+            calculation.ExitDate("01/01/2014");
+
+            //Select the PM ​option in the Choose Leaving Date and Time s​ection
+            calculation.ExitAMPM(false);
+
+            //Click Calculate
+            calculation.Submit();
+
+            //Make sure this input yields an ERROR
+            return calculation.YieldsError();
+        }
+
+        private Boolean Test6()
+        {
+            //Navigate to http://adam.goucher.ca/parkcalc/index.php
+            ParkingCalculation calculation = new ParkingCalculation();
+
+            //Select the Short­Term Parking​ option from the Choose a Lot d​ropdown
+            calculation.ParkingLot("Short-Term Parking");
+
+            //Enter 11:00​ and 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
+            calculation.EntryTime("11:00");
+            calculation.EntryDate("01/01/2014");
+
+            //Select the PM ​option in the Choose Entry Date and Time ​section
+            calculation.EntryAMPM(false);
+
+            //Enter 10:00​ and 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
+            calculation.ExitTime("10:00");
+            calculation.ExitDate("01/01/2014");
+
+            //Select the PM ​option in the Choose Leaving Date and Time s​ection
+            calculation.ExitAMPM(false);
+
+            //Click Calculate
+            calculation.Submit();
+
+            //Check that the following error message appears: ERROR! YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME
+            return calculation.ErrorMessage("ERROR! YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME");
+        }
+
+        private Boolean Test7()
+        {
+            //Navigate to http://adam.goucher.ca/parkcalc/index.php
+            ParkingCalculation calculation = new ParkingCalculation();
+
+            //Select the Short­Term Parking​ option from the Choose a Lot d​ropdown
+            calculation.ParkingLot("Short-Term Parking");
+
+            //Enter "AS:DF" ​in the Choose Entry Date and Time s​ection
+            calculation.EntryTime("AS:DF");
+
+            //Enter 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
+            calculation.EntryDate("01/01/2014");
+
+            //Select the PM ​option in the Choose Entry Date and Time ​section
+            calculation.EntryAMPM(false);
+
+            //Enter 10:00​ in the Choose Leaving Date and Time s​ection
+            calculation.ExitTime("10:00");
+
+            //Enter 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
+            calculation.ExitDate("01/01/2014");
+
+            //Select the PM ​option in the Choose Leaving Date and Time s​ection
+            calculation.ExitAMPM(false);
+
+            //Click Calculate
+            calculation.Submit();
+
+            //Make sure this input yields an ERROR
+            return calculation.YieldsError();
+        }
+
+        private Boolean Test8()
+        {
+            //Navigate to http://adam.goucher.ca/parkcalc/index.php
+            ParkingCalculation calculation = new ParkingCalculation();
+
+            //Select the Short­Term Parking​ option from the Choose a Lot d​ropdown
+            calculation.ParkingLot("Short-Term Parking");
+
+            //Enter 10:00​ and 01 / 40 / 2014 ​in the Choose Entry Date and Time s​ection
+            calculation.EntryTime("10:00");
+            calculation.EntryDate("01/40/2014");
+
+            //Select the PM ​option in the Choose Entry Date and Time ​section
+            calculation.EntryAMPM(false);
+
+            //Enter 11:00​ and 01 / 40 / 2014 ​in the Choose Leaving Date and Time s​ection
+            calculation.ExitTime("11:00");
+            calculation.ExitDate("01/40/2014");
+
+            //Select the PM ​option in the Choose Leaving Date and Time s​ection
+            calculation.ExitAMPM(false);
+
+            //Click Calculate
+            calculation.Submit();
+
+            //Make sure this input yields an ERROR
+            return calculation.YieldsError();
+        }
     }
 }
