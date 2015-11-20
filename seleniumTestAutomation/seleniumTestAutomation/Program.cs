@@ -12,6 +12,71 @@ using OpenQA.Selenium.Support.PageObjects;
 
 namespace seleniumTestAutomation
 {
+    class DatePickerObject
+    {
+        //Object page references
+        IWebDriver driver;
+
+        public DatePickerObject(IWebDriver datePickerHandle)
+        {
+            //Set the reference to the date picker
+            driver = datePickerHandle;
+        }
+
+        private void ChangeYear(int objectiveYear)
+        {
+            while (objectiveYear != int.Parse(driver.FindElements(By.TagName("font")).ElementAt(1).Text.ToString()))
+            {
+                if (objectiveYear > int.Parse(driver.FindElements(By.TagName("font")).ElementAt(1).Text.ToString()))
+                {
+                    //Decrease the year if it is higher than desired
+                    driver.FindElements(By.TagName("font")).ElementAt(2).Click();
+                    
+                }
+                else
+                {
+                    //Increase the year if it is lower than desired
+                    driver.FindElements(By.TagName("font")).ElementAt(0).Click();
+                }
+            }
+        }
+
+        private void ChangeMonth(int monthIndex)
+        {
+            //Create object reference to month selector
+            SelectElement monthPick = new SelectElement(driver.FindElement(By.Name("MonthSelector")));
+
+            //Select the desired month
+            monthPick.SelectByIndex(monthIndex - 1);
+        }
+
+        public void SelectDate(int day, int month, int year)
+        {
+            //Select the desired year
+            ChangeYear(year);
+
+            //Select the desired month
+            ChangeMonth(month);
+            
+            //Find the correct day to click on
+            foreach (IWebElement indDate in driver.FindElements(By.TagName("a")))
+            {
+                if (indDate.GetAttribute("href").Contains("'" + month + "/" + day + "/" + year + "'"))
+                {
+                    //Click on the desired day
+                    indDate.Click();
+
+                    //Switch focus back to the main window
+                    driver.SwitchTo().Window(driver.WindowHandles.First());
+
+                    //Leave the function
+                    return;
+                }
+
+            }
+        }
+    }
+
     class ParkingCalculation
     {
         //Object page references
@@ -29,15 +94,8 @@ namespace seleniumTestAutomation
         private IWebElement durationLength;
         private IWebElement errorMessage;
         private IWebElement submitButton;
-        private IWebElement entryDateSelection;
-        private IWebElement exitDateSelection;
 
-        public void EntryDatePick()
-        {
-            driver.FindElements(By.TagName("a")).ElementAt(0).Click();
-            //driver.WindowHandles
-            //driver.SwitchTo().Window("Pick a Date");
-        }
+        
 
         //Constructor
         public ParkingCalculation()
@@ -159,6 +217,23 @@ namespace seleniumTestAutomation
             entryDate.SendKeys(date.ToString());
         }
 
+        //Set the value of the entry date via the Date Picker
+        public void EntryDate(int day, int month, int year)
+        {
+            //Open the date picker
+            driver.FindElements(By.TagName("a")).ElementAt(0).Click();
+
+            //Save the main page reference
+            string mainWindowHandle = driver.WindowHandles.First();
+
+            //Save the date picker reference
+            string datePickerPopup = driver.WindowHandles.Last();
+            DatePickerObject datePicker = new DatePickerObject(driver.SwitchTo().Window(datePickerPopup));
+
+            //Select the desired date
+            datePicker.SelectDate(day, month, year);
+        }
+
         //Return the current entry date value
         public string EntryDate()
         {
@@ -205,12 +280,29 @@ namespace seleniumTestAutomation
             }
         }
 
-        //Set the value of the entry date
+        //Set the value of the exit date
         public void ExitDate(string date)
         {
             exitDate.Clear();
             exitDate.Click();
             exitDate.SendKeys(date.ToString());
+        }
+
+        //Set the value of the exit date via the Date Picker
+        public void ExitDate(int day, int month, int year)
+        {
+            //Open the date picker
+            driver.FindElements(By.TagName("a")).ElementAt(1).Click();
+
+            //Save the main page reference
+            string mainWindowHandle = driver.WindowHandles.First();
+
+            //Save the date picker reference
+            string datePickerPopup = driver.WindowHandles.Last();
+            DatePickerObject datePicker = new DatePickerObject(driver.SwitchTo().Window(datePickerPopup));
+
+            //Select the desired date
+            datePicker.SelectDate(day, month, year);
         }
 
         //Return the current exit date value
@@ -313,30 +405,15 @@ namespace seleniumTestAutomation
         static void Main(string[] args)
         {
             TestFramework testInstance = new TestFramework();
-
-            ////Run each of the tests
-
-            //Debug.WriteLine("Test 1: " + testInstance.Test1());   //PASSED
-            //Debug.WriteLine("Test 2: " + testInstance.Test2());   //Needs more work
-            //Debug.WriteLine("Test 3: " + testInstance.Test3());   //PASSED
-            //Debug.WriteLine("Test 4: " + testInstance.Test4());   //FAILED
-            //Debug.WriteLine("Test 5: " + testInstance.Test5());   //FAILED 
-            //Debug.WriteLine("Test 6: " + testInstance.Test6());   //FAILED
-            //Debug.WriteLine("Test 7: " + testInstance.Test7());   //FAILED
-            //Debug.WriteLine("Test 8: " + testInstance.Test8());   //FAILED
             
-            testInstance.Test0();
-        }
-
-        void Test0()
-        {
-            //Open up web page to testing URL
-            ParkingCalculation calculation = new ParkingCalculation();
-
-            //Select the date picker
-            calculation.EntryDatePick();
-
-            
+            Debug.WriteLine("Test 1: " + testInstance.Test1());   //PASSED = Successful Verification
+            Debug.WriteLine("Test 2: " + testInstance.Test2());   //PASSED = Successful Verification
+            Debug.WriteLine("Test 3: " + testInstance.Test3());   //PASSED = Successful Verification
+            Debug.WriteLine("Test 4: " + testInstance.Test4());   //FAILED = Successful Verification
+            Debug.WriteLine("Test 5: " + testInstance.Test5());   //FAILED = Successful Verification
+            Debug.WriteLine("Test 6: " + testInstance.Test6());   //FAILED = Successful Verification
+            Debug.WriteLine("Test 7: " + testInstance.Test7());   //FAILED = Successful Verification
+            Debug.WriteLine("Test 8: " + testInstance.Test8());   //FAILED = Successful Verification
         }
 
         private Boolean Test1()
@@ -378,12 +455,12 @@ namespace seleniumTestAutomation
             calculation.ParkingLot("Long-Term Surface Parking");
 
             //Click on the Calendar Icon ​in the Choose Entry Date and Time s​ection
-            //Select 01 / 01 / 2014 ​in the new window that appears                                                             //NEED TO SUPPORT THE DATE SELECTOR
-
+            //Select 01 / 01 / 2014 ​in the new window that appears                                                           
+            calculation.EntryDate(1, 1, 2014);
 
             //Click on the Calendar Icon ​in the Choose Leaving Date and Time s​ection
             //Select 02 / 01 / 2014 ​in the new window that appears
-
+            calculation.ExitDate(1, 2, 2014);
 
             //Click Calculate
             calculation.Submit();
