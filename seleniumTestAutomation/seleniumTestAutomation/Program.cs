@@ -267,7 +267,7 @@ namespace seleniumTestAutomation
         {
             if (durationLength != null && !YieldsError() && !DefaultState())
             {
-                return durationLength.Text.ToString().Substring(8);
+                return durationLength.Text.ToString().Trim();
             }
             else
             {
@@ -276,11 +276,10 @@ namespace seleniumTestAutomation
         }
 
         //Return if the calculation is NOT yielding an error AND matches the specific duration string
-        public Boolean ParkingDuration(string days, string hours, string minutes)
+        public Boolean ParkingDuration(string length)
         {
-            string durationTest = "(" + days + " Days, " + hours + " Hours, " + minutes + " Minutes)";
-
-            return (!YieldsError() && !DefaultState() && durationLength.Text.ToString() == durationTest.ToString());
+            Debug.WriteLine(length);
+            return (!YieldsError() && !DefaultState() && durationLength.Text.Trim().ToString() == length.ToString());
         }
 
         //Submit the calculation request to the webpage
@@ -307,86 +306,93 @@ namespace seleniumTestAutomation
             TestFramework testInstance = new TestFramework();
 
             ////Run each of the tests
-            //Console.WriteLine("Test 1: " + testInstance.Test1());
-            //Console.WriteLine("Test 2: " + testInstance.Test2());
-            //Console.WriteLine("Test 3: " + testInstance.Test3());
-            //Console.WriteLine("Test 4: " + testInstance.Test4());
-            //Console.WriteLine("Test 5: " + testInstance.Test5());
-            //Console.WriteLine("Test 6: " + testInstance.Test6());
-            //Console.WriteLine("Test 7: " + testInstance.Test7());
-            //Console.WriteLine("Test 8: " + testInstance.Test8());
-           
-            testInstance.Test0();
+
+            Debug.WriteLine("Test 1: " + testInstance.Test1());
+            //Debug.WriteLine("Test 2: " + testInstance.Test2());
+            //Debug.WriteLine("Test 3: " + testInstance.Test3());
+            //Debug.WriteLine("Test 4: " + testInstance.Test4());
+            //Debug.WriteLine("Test 5: " + testInstance.Test5());
+            //Debug.WriteLine("Test 6: " + testInstance.Test6());
+            //Debug.WriteLine("Test 7: " + testInstance.Test7());
+            //Debug.WriteLine("Test 8: " + testInstance.Test8());
+
+            //testInstance.Test0();
         }
 
-        void Test0()
-        {
-            //Open up web page to testing URL
-            ParkingCalculation calculation = new ParkingCalculation();
-
-            //Set parking type to 'Economy Parking'
-            calculation.ParkingLot("Economy Parking");
-
-            //Set entry time to '8:00'
-            calculation.EntryTime("8:00");
-
-            //Set entry time to PM
-            calculation.EntryAMPM(false);
-
-            //Set entry date to '12/12/2012'
-            calculation.EntryDate("12/12/2012");
-
-            //Set exit time to '9:00'
-            calculation.ExitTime("9:00");
-
-            //Set exit time to PM
-            calculation.ExitAMPM(false);
-
-            //Set exit date to '12/12/2012'
-            calculation.ExitDate("12/12/2012");
-
-            //Pre-submit debug
-            Debug.WriteLine(calculation.ParkingLot());
-            Debug.WriteLine(calculation.EntryTime() + " " + calculation.EntryAMPM() + " " + calculation.EntryDate());
-            Debug.WriteLine(calculation.ExitTime() + " " + calculation.ExitAMPM() + " " + calculation.ExitDate());
-            Debug.WriteLine("Yields Error: " + calculation.YieldsError());
-            Debug.WriteLine("Error message: " + calculation.ErrorMessage() + " Final Cost: " + calculation.FinalCost() + " Parking Duration: " + calculation.ParkingDuration());
-
-
-            //Submit the calculation request
-            calculation.Submit();
-
-            ////After submit debug
-            Debug.WriteLine(calculation.ParkingLot());
-            Debug.WriteLine(calculation.EntryTime() + " " + calculation.EntryAMPM() + " " + calculation.EntryDate());
-            Debug.WriteLine(calculation.ExitTime() + " " + calculation.ExitAMPM() + " " + calculation.ExitDate());
-            Debug.WriteLine("Yields Error: " + calculation.YieldsError());
-            Debug.WriteLine("Error message: " + calculation.ErrorMessage() + " Final Cost: " + calculation.FinalCost() + " Parking Duration: " + calculation.ParkingDuration());
-        }
-
-        //private Boolean Test1()
+        //void Test0()
         //{
-        //    //Navigate to http://adam.goucher.ca/parkcalc/index.php
-        //    //Select the Short­Term Parking​option from the Choose a Lot d​ropdown
-        //    //Enter 10:00​and 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
-        //    //Select the PM ​option in the Choose Entry Date and Time ​section
-        //    //Enter 11:00​and 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
-        //    //Select the PM ​option in the Choose Leaving Date and Time s​ection
-        //    //Click Calculate
-        //    //Check that the COST ​is equal to $ 2.00
-        //    //Check that the duration of stay is equal to(0 Days, 1 Hours, 0 Minutes)
+        //    //Open up web page to testing URL
+        //    ParkingCalculation calculation = new ParkingCalculation();
 
-        //    //Create new test instance
-        //    ParkingCalculation calculation = new ParkingCalculation("STP",'01-01-2014', '10:00', false,'01-01-2014', '11:00', false);
+        //    //Set parking type to 'Economy Parking'
+        //    calculation.ParkingLot("Economy Parking");
 
-        //    //
+        //    //Set entry time to '8:00'
+        //    calculation.EntryTime("8:00");
 
-        //    //Submit the calculation parameters
+        //    //Set entry time to PM
+        //    calculation.EntryAMPM(false);
+
+        //    //Set entry date to '12/12/2012'
+        //    calculation.EntryDate("12/12/2012");
+
+        //    //Set exit time to '9:00'
+        //    calculation.ExitTime("9:00");
+
+        //    //Set exit time to PM
+        //    calculation.ExitAMPM(false);
+
+        //    //Set exit date to '12/12/2012'
+        //    calculation.ExitDate("12/12/2012");
+
+        //    //Pre-submit debug
+        //    Debug.WriteLine(calculation.ParkingLot());
+        //    Debug.WriteLine(calculation.EntryTime() + " " + calculation.EntryAMPM() + " " + calculation.EntryDate());
+        //    Debug.WriteLine(calculation.ExitTime() + " " + calculation.ExitAMPM() + " " + calculation.ExitDate());
+        //    Debug.WriteLine("Yields Error: " + calculation.YieldsError());
+        //    Debug.WriteLine("Error message: " + calculation.ErrorMessage() + " Final Cost: " + calculation.FinalCost() + " Parking Duration: " + calculation.ParkingDuration());
+
+
+        //    //Submit the calculation request
         //    calculation.Submit();
 
-        //    //Return the calculation results
-        //    return (calculation.ExpectedCost() && calculation.ExpectedDuration());
+        //    ////After submit debug
+        //    Debug.WriteLine(calculation.ParkingLot());
+        //    Debug.WriteLine(calculation.EntryTime() + " " + calculation.EntryAMPM() + " " + calculation.EntryDate());
+        //    Debug.WriteLine(calculation.ExitTime() + " " + calculation.ExitAMPM() + " " + calculation.ExitDate());
+        //    Debug.WriteLine("Yields Error: " + calculation.YieldsError());
+        //    Debug.WriteLine("Error message: " + calculation.ErrorMessage() + " Final Cost: " + calculation.FinalCost() + " Parking Duration: " + calculation.ParkingDuration());
         //}
+
+        private Boolean Test1()
+        {
+            //Navigate to http://adam.goucher.ca/parkcalc/index.php
+            ParkingCalculation calculation = new ParkingCalculation();
+
+            //Select the Short­Term Parking​ option from the Choose a Lot d​ropdown
+            calculation.ParkingLot("Short-Term Parking");
+
+            //Enter 10:00​ and 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
+            calculation.EntryTime("10:00");
+            calculation.EntryDate("01/01/2014");
+
+            //Select the PM ​option in the Choose Entry Date and Time ​section
+            calculation.EntryAMPM(false);
+
+            //Enter 11:00​ and 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
+            calculation.ExitTime("11:00");
+            calculation.ExitDate("01/01/2014");
+
+            //Select the PM ​option in the Choose Leaving Date and Time s​ection
+            calculation.ExitAMPM(false);
+
+            //Click Calculate
+            calculation.Submit();
+
+            //Check that the COST ​is equal to $ 2.00
+            //Check that the duration of stay is equal to (0 Days, 1 Hours, 0 Minutes)
+            return (calculation.ParkingDuration("(0 Days, 1 Hours, 0 Minutes)") && calculation.FinalCost("$ 2.00"));
+        }
 
         //private Boolean Test2()
         //{
