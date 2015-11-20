@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
-
-
+using OpenQA.Selenium.Support;
+using OpenQA.Selenium.Support.PageObjects;
 
 namespace seleniumTestAutomation
 {
@@ -39,6 +39,13 @@ namespace seleniumTestAutomation
             //Navigate the NEW object to the desired page
             driver.Navigate().GoToUrl("http://adam.goucher.ca/parkcalc/index.php");
 
+            //Set the page references to their respective objects, after the page loads
+            SetPageReferences();
+        }
+
+        //Set the page references
+        public void SetPageReferences()
+        {
             //Set reference to the parking lot type control
             lotList = new SelectElement(driver.FindElement(By.Name("Lot")));
 
@@ -56,7 +63,7 @@ namespace seleniumTestAutomation
 
             //Set reference to the exit time control
             exitTime = driver.FindElement(By.Name("ExitTime"));
-
+            
             //Set reference to the exit time AM radio control
             exitAM = driver.FindElements(By.Name("ExitTimeAMPM")).ElementAt(0);
 
@@ -65,16 +72,18 @@ namespace seleniumTestAutomation
 
             //Set reference to the exit date control
             exitDate = driver.FindElement(By.Name("ExitDate"));
-
+            
             //Set the references to the parking cost & stay duration OR error message, depending upon the outcome
-            if (driver.FindElements(By.ClassName("SubHead")).Count > 1)
+            costAmount = driver.FindElements(By.ClassName("SubHead")).ElementAt(1);
+            errorMessage = driver.FindElements(By.ClassName("SubHead")).ElementAt(1);
+
+            if (driver.FindElements(By.TagName("tbody")).ElementAt(0).FindElements(By.TagName("span")).Count > 1)
             {
-                costAmount = driver.FindElements(By.ClassName("SubHead")).ElementAt(0);
-                durationLength = driver.FindElements(By.ClassName("SubHead")).ElementAt(1);
-            }
+                durationLength = driver.FindElements(By.TagName("tbody")).ElementAt(0).FindElements(By.TagName("span")).ElementAt(1);
+            } 
             else
             {
-                errorMessage = driver.FindElements(By.ClassName("SubHead")).ElementAt(0);
+                durationLength = null;
             }
 
             //Set the reference to the submit button
@@ -90,7 +99,7 @@ namespace seleniumTestAutomation
         //Return the currently selected parking lot type
         public string ParkingLot()
         {
-            return lotList.SelectedOption.GetAttribute("innerText").ToString();
+            return lotList.SelectedOption.Text.ToString();
         }
 
         //Set the value of the entry time
@@ -204,23 +213,29 @@ namespace seleniumTestAutomation
         //Return if the calculation is yielding an error
         public Boolean YieldsError()
         {
-            return (errorMessage != null) && (errorMessage.GetAttribute("value").ToString().Substring(0,5) == "ERROR");
+            return !DefaultState() && (errorMessage.Text.Length >= 5) && (errorMessage.Text.ToString().Substring(0, 5) == "ERROR");
+        }
+
+        //Return whether the page is still in its default result state
+        public Boolean DefaultState()
+        {
+            return (driver.FindElements(By.TagName("tbody")).ElementAt(0).FindElements(By.TagName("span")).Count > 1 && costAmount.Text.ToString() == "$ 0");
         }
 
         //Return if the calculation is yielding an error AND matches the specific error
-        public Boolean ErrorMessageEquals(string message)
+        public Boolean ErrorMessage(string message)
         {
             //Check if the returned message is an error, and then if it is the requested error type
-            return YieldsError() && (errorMessage.GetAttribute("value").ToString() == message.ToString());
+            return YieldsError() && !DefaultState() && (errorMessage.Text.ToString() == message.ToString());
         }
 
         //Return the calculation error, if the calculation is yielding an error
-        public string ErrorMessageEquals()
+        public string ErrorMessage()
         {
             //Check if the returned message is an error, and then return the error message
             if (YieldsError())
             {
-                return errorMessage.GetAttribute("value").ToString();
+                return errorMessage.Text.ToString();
             }
             else
             {
@@ -229,47 +244,53 @@ namespace seleniumTestAutomation
         }
 
         //Return the cost value, if the calculation is NOT yielding an error
-        public string FinalCostEquals()
+        public string FinalCost()
         {
-            if (YieldsError())
+            if (!YieldsError() && !DefaultState())
             {
-                return "";
+                return costAmount.Text.ToString();
             }
             else
             {
-                return costAmount.GetAttribute("value").ToString();
+                return "";
             }
         }
 
         //Return if the calculation is NOT yielding an error AND matches the specific cost string
-        public Boolean FinalCostEquals(string cost)
+        public Boolean FinalCost(string cost)
         {
-            return !YieldsError() && costAmount.GetAttribute("value").ToString() == cost.ToString();
+            return !YieldsError() && !DefaultState() && costAmount.Text.ToString() == cost.ToString();
         }
 
         //Return the duration string, if the calculation is NOT yielding an error
         public string ParkingDuration()
         {
-            if (YieldsError())
+            if (durationLength != null && !YieldsError() && !DefaultState())
             {
-                return "";
+                return durationLength.Text.ToString().Substring(8);
             }
             else
             {
-                return durationLength.GetAttribute("value").ToString();
+                return "";
             }
         }
 
         //Return if the calculation is NOT yielding an error AND matches the specific duration string
-        public Boolean ParkingDuration(string length)
+        public Boolean ParkingDuration(string days, string hours, string minutes)
         {
-            return !YieldsError() && durationLength.GetAttribute("value").ToString() == length.ToString();
+            string durationTest = "(" + days + " Days, " + hours + " Hours, " + minutes + " Minutes)";
+
+            return (!YieldsError() && !DefaultState() && durationLength.Text.ToString() == durationTest.ToString());
         }
 
         //Submit the calculation request to the webpage
         public void Submit()
         {
+            //Click the Submit button
             submitButton.Click();
+
+            //Reset the page references after the page updates
+            SetPageReferences();
         }
 
         //Return the current test page URL
@@ -328,17 +349,19 @@ namespace seleniumTestAutomation
             Debug.WriteLine(calculation.ParkingLot());
             Debug.WriteLine(calculation.EntryTime() + " " + calculation.EntryAMPM() + " " + calculation.EntryDate());
             Debug.WriteLine(calculation.ExitTime() + " " + calculation.ExitAMPM() + " " + calculation.ExitDate());
-            Debug.WriteLine(calculation.ErrorMessageEquals()); // + calculation.FinalCostEquals() + " " + calculation.ParkingDuration());               //Before the page is submitted, there is only one object (currently defined as an error case)
-                                                                                                                                                        //Need to cover the case when ERROR isn't included, but there is only one object = page isn't submitted yet.
+            Debug.WriteLine("Yields Error: " + calculation.YieldsError());
+            Debug.WriteLine("Error message: " + calculation.ErrorMessage() + " Final Cost: " + calculation.FinalCost() + " Parking Duration: " + calculation.ParkingDuration());
+
 
             //Submit the calculation request
-            //calculation.Submit();
+            calculation.Submit();
 
-            //After submit debug
+            ////After submit debug
             Debug.WriteLine(calculation.ParkingLot());
             Debug.WriteLine(calculation.EntryTime() + " " + calculation.EntryAMPM() + " " + calculation.EntryDate());
             Debug.WriteLine(calculation.ExitTime() + " " + calculation.ExitAMPM() + " " + calculation.ExitDate());
-            //Debug.WriteLine(calculation.ErrorMessageEquals() + calculation.FinalCostEquals() + " " + calculation.ParkingDuration());
+            Debug.WriteLine("Yields Error: " + calculation.YieldsError());
+            Debug.WriteLine("Error message: " + calculation.ErrorMessage() + " Final Cost: " + calculation.FinalCost() + " Parking Duration: " + calculation.ParkingDuration());
         }
 
         //private Boolean Test1()
