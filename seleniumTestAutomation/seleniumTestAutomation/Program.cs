@@ -12,6 +12,99 @@ using OpenQA.Selenium.Support.PageObjects;
 
 namespace seleniumTestAutomation
 {
+    class DateObjectCollection
+    {
+        private IWebElement time;
+        private IWebElement am;
+        private IWebElement pm;
+        private IWebElement date;
+        private IWebDriver driver;
+
+        //Constructor
+        public DateObjectCollection(IWebDriver driver, IWebElement timeControl, IWebElement amControl, IWebElement pmControl, IWebElement dateControl, IWebElement datePicker)
+        {
+            this.driver = driver;
+            time = timeControl;
+            am = amControl;
+            pm = pmControl;
+            date = dateControl;
+        }
+
+        //Return the value of the time
+        public string Time()
+        {
+            return time.Text.ToString();
+        }
+
+        //Set the value of the time
+        public void Time(string time)
+        {
+            this.time.Clear();
+            this.time.Click();
+            this.time.SendKeys(time);
+        }
+
+        //Set the time AM/PM status
+        public void AMPM(string ampm)
+        {
+            if (ampm.ToString() == "am")
+            {
+                this.am.Click();
+            }
+            if (ampm.ToString() == "pm")
+            {
+                this.pm.Click();
+            }
+            
+        }
+
+        //Return the time AM/PM status
+        public string AMPM()
+        {
+            if (this.am.Selected)
+            {
+                return "AM";
+            }
+            else
+            {
+                return "PM";
+            }
+        }
+
+        //Set the value of the date
+        public void Date(string date)
+        {
+            this.date.Clear();
+            this.date.Click();
+            this.date.SendKeys(date);
+        }
+
+        //Set the value of the date via data picker
+        public void Date(int day, int month, int year)
+        {
+            //Save the main page reference
+            string mainWindowHandle = driver.WindowHandles.First();
+
+            //Save the date picker reference
+            string datePickerPopup = driver.WindowHandles.Last();
+
+            //Create new DatePickerObject
+            DatePickerObject datePicker = new DatePickerObject(driver.SwitchTo().Window(datePickerPopup));
+
+            //Select the desired date
+            datePicker.SelectDate(day, month, year);
+
+            //Need to return control to original window handle?
+        }
+
+        //Return the current date value
+        public string Date()
+        {
+            return this.date.Text.ToString();
+        }
+
+    }
+
     class DatePickerObject
     {
         //Object page references
@@ -82,20 +175,12 @@ namespace seleniumTestAutomation
         //Object page references
         private IWebDriver driver;
         private SelectElement lotList;
-        private IWebElement entryTime;
-        private IWebElement entryAM;
-        private IWebElement entryPM;
-        private IWebElement entryDate;
-        private IWebElement exitTime;
-        private IWebElement exitAM;
-        private IWebElement exitPM;
-        private IWebElement exitDate;
         private IWebElement costAmount;
         private IWebElement durationLength;
         private IWebElement errorMessage;
         private IWebElement submitButton;
-
-        
+        public DateObjectCollection entryDetails;
+        public DateObjectCollection leavingDetails;
 
         //Constructor
         public ParkingCalculation()
@@ -116,29 +201,11 @@ namespace seleniumTestAutomation
             //Set reference to the parking lot type control
             lotList = new SelectElement(driver.FindElement(By.Name("Lot")));
 
-            //Set reference to the entry time control
-            entryTime = driver.FindElement(By.Name("EntryTime"));
+            //Set the reference to the Entry DateTime Object
+            entryDetails = new DateObjectCollection(driver, driver.FindElement(By.Name("EntryTime")), driver.FindElements(By.Name("EntryTimeAMPM")).ElementAt(0), driver.FindElements(By.Name("EntryTimeAMPM")).ElementAt(1), driver.FindElement(By.Name("EntryDate")), driver.FindElements(By.TagName("a")).ElementAt(0));
 
-            //Set reference to the entry time AM radio control
-            entryAM = driver.FindElements(By.Name("EntryTimeAMPM")).ElementAt(0);
-
-            //Set reference to the entry time PM radio control
-            entryPM = driver.FindElements(By.Name("EntryTimeAMPM")).ElementAt(1);
-
-            //Set reference to the entry date control
-            entryDate = driver.FindElement(By.Name("EntryDate"));
-
-            //Set reference to the exit time control
-            exitTime = driver.FindElement(By.Name("ExitTime"));
-            
-            //Set reference to the exit time AM radio control
-            exitAM = driver.FindElements(By.Name("ExitTimeAMPM")).ElementAt(0);
-
-            //Set reference to the exit time PM radio control
-            exitPM = driver.FindElements(By.Name("ExitTimeAMPM")).ElementAt(1);
-
-            //Set reference to the exit date control
-            exitDate = driver.FindElement(By.Name("ExitDate"));
+            //Set the reference to the Leaving DateTime Object
+            leavingDetails = new DateObjectCollection(driver, driver.FindElement(By.Name("ExitTime")), driver.FindElements(By.Name("ExitTimeAMPM")).ElementAt(0), driver.FindElements(By.Name("ExitTimeAMPM")).ElementAt(1), driver.FindElement(By.Name("ExitDate")), driver.FindElements(By.TagName("a")).ElementAt(1));
             
             //Set the references to the parking cost & stay duration OR error message, depending upon the outcome
             costAmount = driver.FindElements(By.ClassName("SubHead")).ElementAt(1);
@@ -167,148 +234,6 @@ namespace seleniumTestAutomation
         public string ParkingLot()
         {
             return lotList.SelectedOption.Text.ToString();
-        }
-
-        //Set the value of the entry time
-        public void EntryTime(string time)
-        {
-            entryTime.Clear();
-            entryTime.Click();
-            entryTime.SendKeys(time.ToString());
-        }
-
-        //Return the current entry time value
-        public string EntryTime()
-        {
-            return entryTime.GetAttribute("value").ToString();
-        }
-
-        //Set the entry time to either AM or PM
-        public void EntryAMPM(Boolean am)
-        {
-            if (am)
-            {
-                entryAM.Click();
-            } 
-            else
-            {
-                entryPM.Click();
-            }
-        }
-
-        //Return the current entry time AM/PM status
-        public string EntryAMPM()
-        {
-            if (entryAM.Selected)
-            {
-                return "AM";
-            }
-            else
-            {
-                return "PM";
-            }
-        }
-
-        //Set the value of the entry date
-        public void EntryDate(string date)
-        {
-            entryDate.Clear();
-            entryDate.Click();
-            entryDate.SendKeys(date.ToString());
-        }
-
-        //Set the value of the entry date via the Date Picker
-        public void EntryDate(int day, int month, int year)
-        {
-            //Open the date picker
-            driver.FindElements(By.TagName("a")).ElementAt(0).Click();
-
-            //Save the main page reference
-            string mainWindowHandle = driver.WindowHandles.First();
-
-            //Save the date picker reference
-            string datePickerPopup = driver.WindowHandles.Last();
-            DatePickerObject datePicker = new DatePickerObject(driver.SwitchTo().Window(datePickerPopup));
-
-            //Select the desired date
-            datePicker.SelectDate(day, month, year);
-        }
-
-        //Return the current entry date value
-        public string EntryDate()
-        {
-            return entryDate.GetAttribute("value").ToString();
-        }
-
-        //Set the value of the exit time
-        public void ExitTime(string time)
-        {
-            exitTime.Clear();
-            exitTime.Click();
-            exitTime.SendKeys(time.ToString());
-        }
-
-        //Return the current exit time value
-        public string ExitTime()
-        {
-            return exitTime.GetAttribute("value").ToString();
-        }
-
-        //Set the exit time to either AM or PM
-        public void ExitAMPM(Boolean am)
-        {
-            if (am)
-            {
-                exitAM.Click();
-            }
-            else
-            {
-                exitPM.Click();
-            }
-        }
-
-        //Return the current exit time AM/PM status
-        public string ExitAMPM()
-        {
-            if (exitAM.Selected)
-            {
-                return "AM";
-            }
-            else
-            {
-                return "PM";
-            }
-        }
-
-        //Set the value of the exit date
-        public void ExitDate(string date)
-        {
-            exitDate.Clear();
-            exitDate.Click();
-            exitDate.SendKeys(date.ToString());
-        }
-
-        //Set the value of the exit date via the Date Picker
-        public void ExitDate(int day, int month, int year)
-        {
-            //Open the date picker
-            driver.FindElements(By.TagName("a")).ElementAt(1).Click();
-
-            //Save the main page reference
-            string mainWindowHandle = driver.WindowHandles.First();
-
-            //Save the date picker reference
-            string datePickerPopup = driver.WindowHandles.Last();
-            DatePickerObject datePicker = new DatePickerObject(driver.SwitchTo().Window(datePickerPopup));
-
-            //Select the desired date
-            datePicker.SelectDate(day, month, year);
-        }
-
-        //Return the current exit date value
-        public string ExitDate()
-        {
-            return exitDate.GetAttribute("value").ToString();
         }
 
         //Return if the calculation is yielding an error
@@ -407,13 +332,13 @@ namespace seleniumTestAutomation
             TestFramework testInstance = new TestFramework();
             
             Debug.WriteLine("Test 1: " + testInstance.Test1());   //PASSED = Successful Verification
-            Debug.WriteLine("Test 2: " + testInstance.Test2());   //PASSED = Successful Verification
-            Debug.WriteLine("Test 3: " + testInstance.Test3());   //PASSED = Successful Verification
-            Debug.WriteLine("Test 4: " + testInstance.Test4());   //FAILED = Successful Verification
-            Debug.WriteLine("Test 5: " + testInstance.Test5());   //FAILED = Successful Verification
-            Debug.WriteLine("Test 6: " + testInstance.Test6());   //FAILED = Successful Verification
-            Debug.WriteLine("Test 7: " + testInstance.Test7());   //FAILED = Successful Verification
-            Debug.WriteLine("Test 8: " + testInstance.Test8());   //FAILED = Successful Verification
+            //Debug.WriteLine("Test 2: " + testInstance.Test2());   //PASSED = Successful Verification
+            //Debug.WriteLine("Test 3: " + testInstance.Test3());   //PASSED = Successful Verification
+            //Debug.WriteLine("Test 4: " + testInstance.Test4());   //FAILED = Successful Verification
+            //Debug.WriteLine("Test 5: " + testInstance.Test5());   //FAILED = Successful Verification
+            //Debug.WriteLine("Test 6: " + testInstance.Test6());   //FAILED = Successful Verification
+            //Debug.WriteLine("Test 7: " + testInstance.Test7());   //FAILED = Successful Verification
+            //Debug.WriteLine("Test 8: " + testInstance.Test8());   //FAILED = Successful Verification
         }
 
         private Boolean Test1()
@@ -425,18 +350,18 @@ namespace seleniumTestAutomation
             calculation.ParkingLot("Short-Term Parking");
 
             //Enter 10:00​ and 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
-            calculation.EntryTime("10:00");
-            calculation.EntryDate("01/01/2014");
+            calculation.entryDetails.Time("10:00");
+            calculation.entryDetails.Date("01/01/2014");
 
             //Select the PM ​option in the Choose Entry Date and Time ​section
-            calculation.EntryAMPM(false);
+            calculation.entryDetails.AMPM("pm");
 
             //Enter 11:00​ and 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
-            calculation.ExitTime("11:00");
-            calculation.ExitDate("01/01/2014");
+            calculation.leavingDetails.Time("11:00");
+            calculation.leavingDetails.Date("01/01/2014");
 
             //Select the PM ​option in the Choose Leaving Date and Time s​ection
-            calculation.ExitAMPM(false);
+            calculation.leavingDetails.AMPM("pm");
 
             //Click Calculate
             calculation.Submit();
@@ -456,11 +381,11 @@ namespace seleniumTestAutomation
 
             //Click on the Calendar Icon ​in the Choose Entry Date and Time s​ection
             //Select 01 / 01 / 2014 ​in the new window that appears                                                           
-            calculation.EntryDate(1, 1, 2014);
+            calculation.entryDetails.Date(1, 1, 2014);
 
             //Click on the Calendar Icon ​in the Choose Leaving Date and Time s​ection
             //Select 02 / 01 / 2014 ​in the new window that appears
-            calculation.ExitDate(1, 2, 2014);
+            calculation.leavingDetails.Date(1, 2, 2014);
 
             //Click Calculate
             calculation.Submit();
@@ -480,11 +405,11 @@ namespace seleniumTestAutomation
 
             //Leave the Entry Time​ unchanged
             //Enter 01 / 02 / 2014 ​in the Choose Entry Date and Time s​ection
-            calculation.EntryDate("01/02/2014");
+            calculation.entryDetails.Date("01/02/2014");
 
             //Leave the Leaving Time​ unchanged
             //Enter 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
-            calculation.ExitDate("01/01/2014");
+            calculation.leavingDetails.Date("01/01/2014");
 
             //Click Calculate
             calculation.Submit();
@@ -502,24 +427,24 @@ namespace seleniumTestAutomation
             calculation.ParkingLot("Short-Term Parking");
 
             //Enter 10:00​ and 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
-            calculation.EntryTime("10:00");
-            calculation.EntryDate("01/01/2014");
+            calculation.entryDetails.Time("10:00");
+            calculation.entryDetails.Date("01/01/2014");
 
             //Select the PM ​option in the Choose Entry Date and Time ​section
-            calculation.EntryAMPM(false);
+            calculation.entryDetails.AMPM("pm");
 
             //Enter 11:00​ and 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
-            calculation.ExitTime("11:00");
-            calculation.ExitDate("01/01/2014");
+            calculation.leavingDetails.Time("11:00");
+            calculation.leavingDetails.Date("01/01/2014");
 
             //Select the PM ​option in the Choose Leaving Date and Time s​ection
-            calculation.ExitAMPM(false);
+            calculation.leavingDetails.AMPM("pm");
 
             //Click Calculate
             calculation.Submit();
 
             //Check to make sure both AM/PM radio buttons remained selected
-            return (calculation.EntryAMPM().ToString() == "PM" && calculation.ExitAMPM().ToString() == "PM" && calculation.EntryTime().ToString() == "10:00" && calculation.ExitTime().ToString() == "11:00");
+            return (calculation.entryDetails.AMPM().ToString() == "PM" && calculation.leavingDetails.AMPM().ToString() == "PM" && calculation.entryDetails.Time().ToString() == "10:00" && calculation.leavingDetails.Time().ToString() == "11:00");
         }
 
         private Boolean Test5() 
@@ -531,18 +456,18 @@ namespace seleniumTestAutomation
             calculation.ParkingLot("Short-Term Parking");
 
             //Enter 10:00​ and 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
-            calculation.EntryTime("10:00");
-            calculation.EntryDate("01/01/2014");
+            calculation.entryDetails.Time("10:00");
+            calculation.entryDetails.Date("01/01/2014");
 
             //Select the PM ​option in the Choose Entry Date and Time ​section
-            calculation.EntryAMPM(false);
+            calculation.entryDetails.AMPM("pm");
 
             //Enter 25:00​ and 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
-            calculation.ExitTime("25:00");
-            calculation.ExitDate("01/01/2014");
+            calculation.leavingDetails.Time("25:00");
+            calculation.leavingDetails.Date("01/01/2014");
 
             //Select the PM ​option in the Choose Leaving Date and Time s​ection
-            calculation.ExitAMPM(false);
+            calculation.leavingDetails.AMPM("pm");
 
             //Click Calculate
             calculation.Submit();
@@ -560,18 +485,18 @@ namespace seleniumTestAutomation
             calculation.ParkingLot("Short-Term Parking");
 
             //Enter 11:00​ and 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
-            calculation.EntryTime("11:00");
-            calculation.EntryDate("01/01/2014");
+            calculation.entryDetails.Time("11:00");
+            calculation.entryDetails.Date("01/01/2014");
 
             //Select the PM ​option in the Choose Entry Date and Time ​section
-            calculation.EntryAMPM(false);
+            calculation.entryDetails.AMPM("pm");
 
             //Enter 10:00​ and 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
-            calculation.ExitTime("10:00");
-            calculation.ExitDate("01/01/2014");
+            calculation.leavingDetails.Time("10:00");
+            calculation.leavingDetails.Date("01/01/2014");
 
             //Select the PM ​option in the Choose Leaving Date and Time s​ection
-            calculation.ExitAMPM(false);
+            calculation.leavingDetails.AMPM("pm");
 
             //Click Calculate
             calculation.Submit();
@@ -589,22 +514,22 @@ namespace seleniumTestAutomation
             calculation.ParkingLot("Short-Term Parking");
 
             //Enter "AS:DF" ​in the Choose Entry Date and Time s​ection
-            calculation.EntryTime("AS:DF");
+            calculation.entryDetails.Time("AS:DF");
 
             //Enter 01 / 01 / 2014 ​in the Choose Entry Date and Time s​ection
-            calculation.EntryDate("01/01/2014");
+            calculation.entryDetails.Date("01/01/2014");
 
             //Select the PM ​option in the Choose Entry Date and Time ​section
-            calculation.EntryAMPM(false);
+            calculation.entryDetails.AMPM("pm");
 
             //Enter 10:00​ in the Choose Leaving Date and Time s​ection
-            calculation.ExitTime("10:00");
+            calculation.leavingDetails.Time("10:00");
 
             //Enter 01 / 01 / 2014 ​in the Choose Leaving Date and Time s​ection
-            calculation.ExitDate("01/01/2014");
+            calculation.leavingDetails.Date("01/01/2014");
 
             //Select the PM ​option in the Choose Leaving Date and Time s​ection
-            calculation.ExitAMPM(false);
+            calculation.leavingDetails.AMPM("pm");
 
             //Click Calculate
             calculation.Submit();
@@ -622,18 +547,18 @@ namespace seleniumTestAutomation
             calculation.ParkingLot("Short-Term Parking");
 
             //Enter 10:00​ and 01 / 40 / 2014 ​in the Choose Entry Date and Time s​ection
-            calculation.EntryTime("10:00");
-            calculation.EntryDate("01/40/2014");
+            calculation.entryDetails.Time("10:00");
+            calculation.entryDetails.Date("01/40/2014");
 
             //Select the PM ​option in the Choose Entry Date and Time ​section
-            calculation.EntryAMPM(false);
+            calculation.entryDetails.AMPM("pm");
 
             //Enter 11:00​ and 01 / 40 / 2014 ​in the Choose Leaving Date and Time s​ection
-            calculation.ExitTime("11:00");
-            calculation.ExitDate("01/40/2014");
+            calculation.leavingDetails.Time("11:00");
+            calculation.leavingDetails.Time("01/40/2014");
 
             //Select the PM ​option in the Choose Leaving Date and Time s​ection
-            calculation.ExitAMPM(false);
+            calculation.leavingDetails.AMPM("pm");
 
             //Click Calculate
             calculation.Submit();
