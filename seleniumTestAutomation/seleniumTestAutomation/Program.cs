@@ -20,6 +20,7 @@ namespace seleniumTestAutomation
         private IWebElement pm;
         private IWebElement date;
         private IWebDriver driver;
+        private IWebElement datePicker;
 
         //Constructor
         public DateObjectCollection(IWebDriver driver, IWebElement timeControl, IWebElement amControl, IWebElement pmControl, IWebElement dateControl, IWebElement datePicker)
@@ -29,6 +30,7 @@ namespace seleniumTestAutomation
             am = amControl;
             pm = pmControl;
             date = dateControl;
+            this.datePicker = datePicker;
         }
 
         //Return the value of the time
@@ -83,6 +85,9 @@ namespace seleniumTestAutomation
         //Set the value of the date via data picker
         public void Date(int day, int month, int year)
         {
+            //Open the date picker
+            this.datePicker.Click();
+
             //Save the main page reference
             string mainWindowHandle = driver.WindowHandles.First();
 
@@ -305,7 +310,6 @@ namespace seleniumTestAutomation
         //Return if the calculation is NOT yielding an error AND matches the specific duration string
         public Boolean ParkingDuration(string length)
         {
-            Debug.WriteLine(length);
             return (!YieldsError() && !DefaultState() && durationLength.Text.Trim().ToString() == length.ToString());
         }
 
@@ -342,7 +346,7 @@ namespace seleniumTestAutomation
             Debug.WriteLine("Test 8: " + testInstance.Test8());   //FAILED = Successful Verification
         }
 
-        private Boolean Test1()
+        private String Test1()
         {
             //Navigate to http://adam.goucher.ca/parkcalc/index.php
             ParkingCalculation calculation = new ParkingCalculation();
@@ -369,10 +373,17 @@ namespace seleniumTestAutomation
 
             //Check that the COST ​is equal to $ 2.00
             //Check that the duration of stay is equal to (0 Days, 1 Hours, 0 Minutes)
-            return (calculation.ParkingDuration("(0 Days, 1 Hours, 0 Minutes)") && calculation.FinalCost("$ 2.00"));
+            if (calculation.ParkingDuration("(0 Days, 1 Hours, 0 Minutes)") && calculation.FinalCost("$ 2.00"))
+            {
+                return "-";
+            }
+            else
+            {
+                return "FAILED";
+            }
         }
 
-        private Boolean Test2()
+        private String Test2()
         {
             //Navigate to http://adam.goucher.ca/parkcalc/index.php
             ParkingCalculation calculation = new ParkingCalculation();
@@ -393,10 +404,17 @@ namespace seleniumTestAutomation
 
             //Check that the COST ​is equal to $ 270.00
             //Check that the duration of stay is equal to (31 Days, 0 Hours, 0 Minutes)
-            return (calculation.ParkingDuration("(31 Days, 0 Hours, 0 Minutes)") && calculation.FinalCost("$ 270.00"));
+            if (calculation.ParkingDuration("(31 Days, 0 Hours, 0 Minutes)") && calculation.FinalCost("$ 270.00"))
+            {
+                return "-";
+            }
+            else
+            {
+                return "FAILED";
+            }
         }
 
-        private Boolean Test3()
+        private String Test3()
         {
             //Navigate to http://adam.goucher.ca/parkcalc/index.php
             ParkingCalculation calculation = new ParkingCalculation();
@@ -416,10 +434,17 @@ namespace seleniumTestAutomation
             calculation.Submit();
 
             //Check that the following error message appears: ERROR! YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME
-            return calculation.ErrorMessage("ERROR! YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME");
+            if (calculation.ErrorMessage("ERROR! YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME"))
+            {
+                return "-";
+            }
+            else
+            {
+                return "FAILED";
+            }
         }
 
-        private Boolean Test4()
+        private String Test4()
         {
             //Navigate to http://adam.goucher.ca/parkcalc/index.php
             ParkingCalculation calculation = new ParkingCalculation();
@@ -444,11 +469,18 @@ namespace seleniumTestAutomation
             //Click Calculate
             calculation.Submit();
 
-            //Check to make sure both AM/PM radio buttons remained selected
-            return (calculation.entryDetails.AMPM().ToString() == "PM" && calculation.leavingDetails.AMPM().ToString() == "PM" && calculation.entryDetails.Time().ToString() == "10:00" && calculation.leavingDetails.Time().ToString() == "11:00");
+            //Check to make sure both PM radio buttons remained selected, and entry time = 10:00, and leaving time  = 11:00
+            if (calculation.entryDetails.AMPM().ToString() == "PM" && calculation.leavingDetails.AMPM().ToString() == "PM" && calculation.entryDetails.Time().ToString() == "10:00" && calculation.leavingDetails.Time().ToString() == "11:00")
+            {
+                return "-";
+            }
+            else
+            {
+                return "FAILED";
+            }
         }
 
-        private Boolean Test5() 
+        private String Test5() 
         {
             //Navigate to http://adam.goucher.ca/parkcalc/index.php
             ParkingCalculation calculation = new ParkingCalculation();
@@ -474,10 +506,17 @@ namespace seleniumTestAutomation
             calculation.Submit();
 
             //Make sure this input yields an ERROR
-            return calculation.YieldsError();
+            if (calculation.YieldsError())
+            {
+                return "-";
+            }
+            else
+            {
+                return "FAILED";
+            }
         }
 
-        private Boolean Test6()
+        private String Test6()
         {
             //Navigate to http://adam.goucher.ca/parkcalc/index.php
             ParkingCalculation calculation = new ParkingCalculation();
@@ -503,10 +542,17 @@ namespace seleniumTestAutomation
             calculation.Submit();
 
             //Check that the following error message appears: ERROR! YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME
-            return calculation.ErrorMessage("ERROR! YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME");
+            if (calculation.ErrorMessage("ERROR! YOUR EXIT DATE OR TIME IS BEFORE YOUR ENTRY DATE OR TIME"))
+            {
+                return "-";
+            }
+            else
+            {
+                return "FAILED";
+            }
         }
 
-        private Boolean Test7()
+        private String Test7()
         {
             //Navigate to http://adam.goucher.ca/parkcalc/index.php
             ParkingCalculation calculation = new ParkingCalculation();
@@ -536,10 +582,17 @@ namespace seleniumTestAutomation
             calculation.Submit();
 
             //Make sure this input yields an ERROR
-            return calculation.YieldsError();
+            if (calculation.YieldsError())
+            {
+                return "-";
+            }
+            else
+            {
+                return "FAILED";
+            }
         }
 
-        private Boolean Test8()
+        private String Test8()
         {
             //Navigate to http://adam.goucher.ca/parkcalc/index.php
             ParkingCalculation calculation = new ParkingCalculation();
@@ -556,7 +609,7 @@ namespace seleniumTestAutomation
 
             //Enter 11:00​ and 01 / 40 / 2014 ​in the Choose Leaving Date and Time s​ection
             calculation.leavingDetails.Time("11:00");
-            calculation.leavingDetails.Time("01/40/2014");
+            calculation.leavingDetails.Date("01/40/2014");
 
             //Select the PM ​option in the Choose Leaving Date and Time s​ection
             calculation.leavingDetails.AMPM("pm");
@@ -565,7 +618,14 @@ namespace seleniumTestAutomation
             calculation.Submit();
 
             //Make sure this input yields an ERROR
-            return calculation.YieldsError();
+            if (calculation.YieldsError())
+            {
+                return "-";
+            }
+            else
+            {
+                return "FAILED";
+            }
         }
     }
 }
