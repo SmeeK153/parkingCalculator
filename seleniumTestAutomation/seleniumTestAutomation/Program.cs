@@ -10,6 +10,7 @@ using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Support;
 using OpenQA.Selenium.Support.PageObjects;
 
+
 namespace seleniumTestAutomation
 {
     class DateObjectCollection
@@ -186,7 +187,7 @@ namespace seleniumTestAutomation
         public ParkingCalculation()
         {
             //Chrome web driver reference
-            driver = new ChromeDriver(@"C:\Users\Eric\Desktop\Selenium DLLs\chromedriver_win32");
+            driver = new ChromeDriver(@"C:\Users\Eric\Desktop\Parking Calculator Files\chromedriver_win32");
 
             //Navigate the NEW object to the desired page
             driver.Navigate().GoToUrl("http://adam.goucher.ca/parkcalc/index.php");
@@ -330,15 +331,15 @@ namespace seleniumTestAutomation
         static void Main(string[] args)
         {
             TestFramework testInstance = new TestFramework();
-            
+
             Debug.WriteLine("Test 1: " + testInstance.Test1());   //PASSED = Successful Verification
-            //Debug.WriteLine("Test 2: " + testInstance.Test2());   //PASSED = Successful Verification
-            //Debug.WriteLine("Test 3: " + testInstance.Test3());   //PASSED = Successful Verification
-            //Debug.WriteLine("Test 4: " + testInstance.Test4());   //FAILED = Successful Verification
-            //Debug.WriteLine("Test 5: " + testInstance.Test5());   //FAILED = Successful Verification
-            //Debug.WriteLine("Test 6: " + testInstance.Test6());   //FAILED = Successful Verification
-            //Debug.WriteLine("Test 7: " + testInstance.Test7());   //FAILED = Successful Verification
-            //Debug.WriteLine("Test 8: " + testInstance.Test8());   //FAILED = Successful Verification
+            Debug.WriteLine("Test 2: " + testInstance.Test2());   //PASSED = Successful Verification
+            Debug.WriteLine("Test 3: " + testInstance.Test3());   //PASSED = Successful Verification
+            Debug.WriteLine("Test 4: " + testInstance.Test4());   //FAILED = Successful Verification
+            Debug.WriteLine("Test 5: " + testInstance.Test5());   //FAILED = Successful Verification
+            Debug.WriteLine("Test 6: " + testInstance.Test6());   //FAILED = Successful Verification
+            Debug.WriteLine("Test 7: " + testInstance.Test7());   //FAILED = Successful Verification
+            Debug.WriteLine("Test 8: " + testInstance.Test8());   //FAILED = Successful Verification
         }
 
         private Boolean Test1()
