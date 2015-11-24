@@ -192,7 +192,7 @@ namespace seleniumTestAutomation
         public ParkingCalculation()
         {
             //Chrome web driver reference
-            driver = new ChromeDriver(@"C:\Users\Eric\Desktop\Parking Calculator Files\chromedriver_win32");
+            driver = new ChromeDriver(@"C:\Users\Public");
 
             //Navigate the NEW object to the desired page
             driver.Navigate().GoToUrl("http://adam.goucher.ca/parkcalc/index.php");
